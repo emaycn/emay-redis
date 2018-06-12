@@ -1,4 +1,4 @@
-package cn.emay.redis;
+package cn.emay.store.redis;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package cn.emay.redis;
+package cn.emay.store.redis;
 
 import java.io.IOException;
 import java.util.ArrayList;
