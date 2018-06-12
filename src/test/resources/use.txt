@@ -1,0 +1,30 @@
+<bean class="cn.emay.common.cache.redis.RedisSingleClient" id="redis" init-method="init"  destroy-method="close">
+	<property name="properties" >
+		<props>
+			<prop key="host">127.0.0.1</prop>
+			<prop key="port">9276</prop>
+			<prop key="timeout">5000</prop>
+			<prop key="maxIdle">8</prop>
+			<prop key="maxTotal">16</prop>
+			<prop key="minIdle">1</prop>
+			<prop key="maxWaitMillis">2000</prop>
+			<!-- <prop key="password">******</prop> -->
+			<!-- <prop key="datePattern">yyyy-MM-dd HH:mm:ss SSS</prop> -->
+		</props>
+	</property>
+</bean>
+
+<bean class="cn.emay.common.cache.redis.RedisClusterClient" id="redis" init-method="init" destroy-method="close">
+	<property name="properties" >
+		<props>
+			<prop key="hosts">127.0.0.1:1000,127.0.0.1:1111</prop>
+			<prop key="maxRedirections">5</prop>
+			<prop key="timeout">5000</prop>
+			<prop key="maxIdle">8</prop>
+			<prop key="maxTotal">16</prop>
+			<prop key="minIdle">1</prop>
+			<prop key="maxWaitMillis">2000</prop>
+			<!-- <prop key="datePattern">yyyy-MM-dd HH:mm:ss SSS</prop> -->
+		</props>
+	</property>
+</bean>
