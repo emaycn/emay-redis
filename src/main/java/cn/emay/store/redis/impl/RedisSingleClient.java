@@ -49,8 +49,8 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 	 * @param maxWaitMillis
 	 *            最大等待时间
 	 */
-	public RedisSingleClient(String host, int port, int timeout, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
-		this(host, port, timeout, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
+	public RedisSingleClient(String host, int port, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
+		this(host, port, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
 	}
 
 	/**
@@ -73,11 +73,11 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 	 * @param datePattern
 	 *            Json转换日期格式
 	 */
-	private RedisSingleClient(String host, int port, int timeout, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+	public RedisSingleClient(String host, int port, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
 		properties = new Properties();
 		properties.setProperty("host", host);
 		properties.setProperty("port", String.valueOf(port));
-		properties.setProperty("timeout", String.valueOf(timeout));
+		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
 		properties.setProperty("maxTotal", String.valueOf(maxTotal));
 		properties.setProperty("minIdle", String.valueOf(minIdle));

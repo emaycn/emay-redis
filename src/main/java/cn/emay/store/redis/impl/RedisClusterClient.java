@@ -53,8 +53,8 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 	 * @param maxWaitMillis
 	 *            最大等待时间
 	 */
-	public RedisClusterClient(String hosts, int timeout, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
-		this(hosts, timeout, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
+	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
+		this(hosts, timeoutMillis, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
 	}
 
 	/**
@@ -77,11 +77,11 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 	 * @param datePattern
 	 *            Json转换日期格式
 	 */
-	public RedisClusterClient(String hosts, int timeout, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
 		properties = new Properties();
 		properties.setProperty("hosts", hosts);
 		properties.setProperty("maxRedirections", String.valueOf(maxRedirections));
-		properties.setProperty("timeout", String.valueOf(timeout));
+		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
 		properties.setProperty("maxTotal", String.valueOf(maxTotal));
 		properties.setProperty("minIdle", String.valueOf(minIdle));

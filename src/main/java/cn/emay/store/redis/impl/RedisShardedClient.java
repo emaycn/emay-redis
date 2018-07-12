@@ -52,8 +52,8 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	 * @param maxWaitMillis
 	 *            最大等待时间
 	 */
-	public RedisShardedClient(String hosts,  int timeout, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
-		this(hosts, timeout, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
+	public RedisShardedClient(String hosts,  int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
+		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
 	}
 
 	/**
@@ -76,10 +76,10 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	 * @param datePattern
 	 *            Json转换日期格式
 	 */
-	private RedisShardedClient(String hosts, int timeout, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
 		properties = new Properties();
 		properties.setProperty("hosts", hosts);
-		properties.setProperty("timeout", String.valueOf(timeout));
+		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
 		properties.setProperty("maxTotal", String.valueOf(maxTotal));
 		properties.setProperty("minIdle", String.valueOf(minIdle));
