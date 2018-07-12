@@ -13,7 +13,7 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.ShardedJedis;
 
-public class SaddCommand implements RedisCommand<Long> {
+public class SaddCommand implements RedisCommand<Void> {
 
 	private String key;
 
@@ -31,22 +31,21 @@ public class SaddCommand implements RedisCommand<Long> {
 	}
 
 	@Override
-	public Long commond(Jedis client) {
+	public Void commond(Jedis client) {
 		return this.exec(client, client, null);
 	}
 
 	@Override
-	public Long commond(JedisCluster client) {
+	public Void commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
 
 	@Override
-	public Long commond(ShardedJedis client) {
+	public Void commond(ShardedJedis client) {
 		return this.exec(client, client, null);
 	}
 
-	private Long exec(JedisCommands command, BinaryJedisCommands bjcommand, BinaryJedisClusterCommands bjccommand) {
-		long length = 0;
+	private Void exec(JedisCommands command, BinaryJedisCommands bjcommand, BinaryJedisClusterCommands bjccommand) {
 		try {
 			List<String> strvalues = new ArrayList<>();
 			List<byte[]> bytvalues = new ArrayList<>();
@@ -67,13 +66,13 @@ public class SaddCommand implements RedisCommand<Long> {
 				}
 			}
 			if (!strvalues.isEmpty()) {
-				length = command.sadd(key, strvalues.toArray(new String[strvalues.size()]));
+				command.sadd(key, strvalues.toArray(new String[strvalues.size()]));
 			}
 			if (!bytvalues.isEmpty()) {
 				if (bjcommand != null) {
-					length = bjcommand.sadd(key.getBytes("UTF-8"), bytvalues.toArray(new byte[bytvalues.size()][]));
+					bjcommand.sadd(key.getBytes("UTF-8"), bytvalues.toArray(new byte[bytvalues.size()][]));
 				} else if (bjccommand != null) {
-					length = bjccommand.sadd(key.getBytes("UTF-8"), bytvalues.toArray(new byte[bytvalues.size()][]));
+					bjccommand.sadd(key.getBytes("UTF-8"), bytvalues.toArray(new byte[bytvalues.size()][]));
 				}
 			}
 			if (expireTime > 0) {
@@ -82,7 +81,7 @@ public class SaddCommand implements RedisCommand<Long> {
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);
 		}
-		return length;
+		return null;
 	}
 
 }

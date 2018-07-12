@@ -1,5 +1,6 @@
 package cn.emay.store.redis.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,22 @@ import cn.emay.store.redis.command.impl.set.SmembersCommand;
 import cn.emay.store.redis.command.impl.set.SpopCommand;
 import cn.emay.store.redis.command.impl.set.SrandmemberCommand;
 import cn.emay.store.redis.command.impl.set.SremCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZaddCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZaddCommandAll;
+import cn.emay.store.redis.command.impl.sortedset.ZcardCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZcountCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrangeByScoreCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrangeByScoreWithOffsetCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrangeCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrankCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZremCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZremerangeByRankCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZremerangeByScoreCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrevrangeByScoreCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrevrangeByScoreWithOffsetCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrevrangeCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZrevrankCommand;
+import cn.emay.store.redis.command.impl.sortedset.ZscoreCommand;
 import cn.emay.store.redis.command.impl.string.DecrByCommand;
 import cn.emay.store.redis.command.impl.string.DecrCommand;
 import cn.emay.store.redis.command.impl.string.GetCommand;
@@ -41,6 +58,7 @@ import cn.emay.store.redis.command.impl.string.IncrByCommand;
 import cn.emay.store.redis.command.impl.string.IncrCommand;
 import cn.emay.store.redis.command.impl.string.SetCommand;
 import cn.emay.store.redis.command.impl.string.SetnxCommand;
+import redis.clients.jedis.Tuple;
 
 /**
  * 基础客户端逻辑
@@ -54,39 +72,39 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public boolean exists(final String key) {
-		return this.exec(new ExistsCommand(key));
+		return this.execCommand(new ExistsCommand(key));
 	}
 
 	@Override
 	public void del(String... keys) {
-		this.exec(new DelCommand(keys));
+		this.execCommand(new DelCommand(keys));
 	}
 
 	@Override
 	public void expire(final String key, final int seconds) {
-		this.exec(new ExpireCommand(key, seconds));
+		this.execCommand(new ExpireCommand(key, seconds));
 	}
 
 	@Override
 	public long ttl(String key) {
-		return this.exec(new TtlCommand(key));
+		return this.execCommand(new TtlCommand(key));
 	}
 
 	@Override
 	public void persist(String key) {
-		this.exec(new PersistCommand(key));
+		this.execCommand(new PersistCommand(key));
 	}
 
 	/* String */
 
 	@Override
 	public void set(String key, Object value, int expireTime) {
-		this.exec(new SetCommand(key, value, expireTime, getDatePattern()));
+		this.execCommand(new SetCommand(key, value, expireTime, getDatePattern()));
 	}
 
 	@Override
 	public boolean setnx(String key, Object value, int expireTime) {
-		return this.exec(new SetnxCommand(key, value, expireTime, getDatePattern()));
+		return this.execCommand(new SetnxCommand(key, value, expireTime, getDatePattern()));
 	}
 
 	@Override
@@ -96,69 +114,69 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> T get(String key, Class<T> clazz) {
-		return this.exec(new GetCommand<T>(key, clazz, getDatePattern()));
+		return this.execCommand(new GetCommand<T>(key, clazz, getDatePattern()));
 	}
 
 	@Override
 	public long decr(String key) {
-		return this.exec(new DecrCommand(key));
+		return this.execCommand(new DecrCommand(key));
 	}
 
 	@Override
 	public long decrBy(String key, long number) {
-		return this.exec(new DecrByCommand(key, number));
+		return this.execCommand(new DecrByCommand(key, number));
 	}
 
 	@Override
 	public long incr(String key) {
-		return this.exec(new IncrCommand(key));
+		return this.execCommand(new IncrCommand(key));
 	}
 
 	@Override
 	public long incrBy(String key, long number) {
-		return this.exec(new IncrByCommand(key, number));
+		return this.execCommand(new IncrByCommand(key, number));
 	}
 
 	/* HASH */
 
 	@Override
 	public void hdel(String key, String... fieldname) {
-		this.exec(new HdelCommand(key, fieldname));
+		this.execCommand(new HdelCommand(key, fieldname));
 	}
 
 	@Override
 	public long hlen(String key) {
-		return this.exec(new HlenCommand(key));
+		return this.execCommand(new HlenCommand(key));
 	}
 
 	@Override
 	public boolean hexists(String key, String fieldname) {
-		return this.exec(new HexistsCommand(key, fieldname));
+		return this.execCommand(new HexistsCommand(key, fieldname));
 	}
 
 	@Override
 	public Set<String> hkeys(String key) {
-		return this.exec(new HkeysCommand(key));
+		return this.execCommand(new HkeysCommand(key));
 	}
 
 	@Override
 	public long hIncrBy(String key, String fieldname, long number) {
-		return this.exec(new HincrByCommand(key, fieldname, number));
+		return this.execCommand(new HincrByCommand(key, fieldname, number));
 	}
 
 	@Override
 	public void hset(String key, String fieldname, Object value, int expireTime) {
-		this.exec(new HsetCommand(key, fieldname, value, expireTime, getDatePattern()));
+		this.execCommand(new HsetCommand(key, fieldname, value, expireTime, getDatePattern()));
 	}
 
 	@Override
 	public boolean hsetnx(String key, String fieldname, Object value, int expireTime) {
-		return this.exec(new HsetnxCommand(key, fieldname, value, expireTime, getDatePattern()));
+		return this.execCommand(new HsetnxCommand(key, fieldname, value, expireTime, getDatePattern()));
 	}
 
 	@Override
 	public void hmset(String key, Map<String, Object> value, int expireTime) {
-		this.exec(new HmsetCommand(key, value, expireTime, getDatePattern()));
+		this.execCommand(new HmsetCommand(key, value, expireTime, getDatePattern()));
 	}
 
 	@Override
@@ -168,7 +186,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> T hget(String key, String fieldname, Class<T> clazz) {
-		return this.exec(new HgetCommand<T>(key, fieldname, clazz, getDatePattern()));
+		return this.execCommand(new HgetCommand<T>(key, fieldname, clazz, getDatePattern()));
 	}
 
 	@Override
@@ -178,7 +196,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> List<T> hmget(String key, Class<T> clazz, String... fieldnames) {
-		return this.exec(new HmgetCommand<T>(key, clazz, getDatePattern(), fieldnames));
+		return this.execCommand(new HmgetCommand<T>(key, clazz, getDatePattern(), fieldnames));
 	}
 
 	@Override
@@ -188,24 +206,24 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> Map<String, T> hgetAll(String key, Class<T> clazz) {
-		return this.exec(new HgetAllCommand<T>(key, clazz, getDatePattern()));
+		return this.execCommand(new HgetAllCommand<T>(key, clazz, getDatePattern()));
 	}
 
 	/* LIST */
 
 	@Override
 	public long llen(String key) {
-		return this.exec(new LlenCommand(key));
+		return this.execCommand(new LlenCommand(key));
 	}
 
 	@Override
 	public long lpush(String key, int expireTime, Object... objects) {
-		return this.exec(new LpushCommand(key, expireTime, getDatePattern(), objects));
+		return this.execCommand(new LpushCommand(key, expireTime, getDatePattern(), objects));
 	}
 
 	@Override
 	public long rpush(String key, int expireTime, Object... objects) {
-		return this.exec(new RpushCommand(key, expireTime, getDatePattern(), objects));
+		return this.execCommand(new RpushCommand(key, expireTime, getDatePattern(), objects));
 	}
 
 	@Override
@@ -215,7 +233,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> T lpop(String key, Class<T> clazz) {
-		return this.exec(new LpopCommand<>(key, clazz, getDatePattern()));
+		return this.execCommand(new LpopCommand<>(key, clazz, getDatePattern()));
 	}
 
 	@Override
@@ -225,7 +243,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> T rpop(String key, Class<T> clazz) {
-		return this.exec(new RpopCommand<>(key, clazz, getDatePattern()));
+		return this.execCommand(new RpopCommand<>(key, clazz, getDatePattern()));
 	}
 
 	@Override
@@ -235,19 +253,19 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> List<T> lrange(String key, long start, long end, Class<T> clazz) {
-		return this.exec(new LrangeCommand<T>(key, start, end, clazz, getDatePattern()));
+		return this.execCommand(new LrangeCommand<T>(key, start, end, clazz, getDatePattern()));
 	}
 
 	/* SET */
 
 	@Override
 	public long scard(String key) {
-		return this.exec(new ScardCommand(key));
+		return this.execCommand(new ScardCommand(key));
 	}
 
 	@Override
-	public long sadd(String key, int expireTime, Object... values) {
-		return this.exec(new SaddCommand(key, expireTime, getDatePattern(), values));
+	public void sadd(String key, int expireTime, Object... values) {
+		this.execCommand(new SaddCommand(key, expireTime, getDatePattern(), values));
 	}
 
 	@Override
@@ -257,7 +275,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> T spop(String key, Class<T> clazz) {
-		return this.exec(new SpopCommand<T>(key, clazz, getDatePattern()));
+		return this.execCommand(new SpopCommand<T>(key, clazz, getDatePattern()));
 	}
 
 	@Override
@@ -279,7 +297,7 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> List<T> srandmember(String key, int count, Class<T> clazz) {
-		return this.exec(new SrandmemberCommand<T>(key, clazz, count, getDatePattern()));
+		return this.execCommand(new SrandmemberCommand<T>(key, clazz, count, getDatePattern()));
 	}
 
 	@Override
@@ -289,17 +307,151 @@ public abstract class RedisBaseClient implements RedisClient {
 
 	@Override
 	public <T> Set<T> smembers(String key, Class<T> clazz) {
-		return this.exec(new SmembersCommand<T>(key, clazz, getDatePattern()));
+		return this.execCommand(new SmembersCommand<T>(key, clazz, getDatePattern()));
 	}
 
 	@Override
 	public long srem(String key, Object... members) {
-		return this.exec(new SremCommand(key, getDatePattern(), members));
+		return this.execCommand(new SremCommand(key, getDatePattern(), members));
 	}
 
 	@Override
 	public boolean sismember(String key, Object member) {
-		return this.exec(new SismemberCommand(key, member, getDatePattern()));
+		return this.execCommand(new SismemberCommand(key, member, getDatePattern()));
+	}
+
+	/* SORTED SET */
+
+	@Override
+	public void zadd(String key, double score, String member) {
+		this.execCommand(new ZaddCommand(key, score, member));
+	}
+
+	@Override
+	public void zadd(String key, Map<String, Double> scoreMembers) {
+		this.execCommand(new ZaddCommandAll(key, scoreMembers));
+	}
+
+	@Override
+	public long zcard(String key) {
+		return this.execCommand(new ZcardCommand(key));
+	}
+
+	@Override
+	public double zscore(String key, String member) {
+		return this.execCommand(new ZscoreCommand(key, member));
+	}
+
+	@Override
+	public long zrevrank(String key, String member) {
+		return this.execCommand(new ZrevrankCommand(key, member));
+	}
+
+	@Override
+	public long zrank(String key, String member) {
+		return this.execCommand(new ZrankCommand(key, member));
+	}
+
+	@Override
+	public Set<String> zrange(String key, long start, long end) {
+		return this.execCommand(new ZrangeCommand(key, start, end));
+	}
+
+	@Override
+	public Set<String> zrevrange(String key, long start, long end) {
+		return this.execCommand(new ZrevrangeCommand(key, start, end));
+	}
+
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max) {
+		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max);
+		if (ts == null || ts.isEmpty()) {
+			return null;
+		}
+		Set<String> members = new HashSet<>(ts.size());
+		for (Tuple t : ts) {
+			members.add(t.getElement());
+		}
+		return members;
+	}
+
+	@Override
+	public Set<Tuple> zrangeByScoreWithScores(String key, double min, double max) {
+		return this.execCommand(new ZrangeByScoreCommand(key, min, max));
+	}
+
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max, int offset, int count) {
+		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max, offset, count);
+		if (ts == null || ts.isEmpty()) {
+			return null;
+		}
+		Set<String> members = new HashSet<>(ts.size());
+		for (Tuple t : ts) {
+			members.add(t.getElement());
+		}
+		return members;
+	}
+
+	@Override
+	public Set<Tuple> zrangeByScoreWithScores(String key, double min, double max, int offset, int count) {
+		return this.execCommand(new ZrangeByScoreWithOffsetCommand(key, min, max, offset, count));
+	}
+
+	@Override
+	public Set<String> zrevrangeByScore(String key, double min, double max) {
+		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max);
+		if (ts == null || ts.isEmpty()) {
+			return null;
+		}
+		Set<String> members = new HashSet<>(ts.size());
+		for (Tuple t : ts) {
+			members.add(t.getElement());
+		}
+		return members;
+	}
+
+	@Override
+	public Set<Tuple> zrevrangeByScoreWithScores(String key, double min, double max) {
+		return this.execCommand(new ZrevrangeByScoreCommand(key, min, max));
+	}
+
+	@Override
+	public Set<String> zrevrangeByScore(String key, double min, double max, int offset, int count) {
+		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max, offset, count);
+		if (ts == null || ts.isEmpty()) {
+			return null;
+		}
+		Set<String> members = new HashSet<>(ts.size());
+		for (Tuple t : ts) {
+			members.add(t.getElement());
+		}
+		return members;
+	}
+
+	@Override
+	public Set<Tuple> zrevrangeByScoreWithScores(String key, double min, double max, int offset, int count) {
+		return this.execCommand(new ZrevrangeByScoreWithOffsetCommand(key, min, max, offset, count));
+	}
+
+	@Override
+	public long zcount(String key, double min, double max) {
+		return this.execCommand(new ZcountCommand(key, min, max));
+	}
+
+	@Override
+	public void zrem(String key, String... members) {
+		this.execCommand(new ZremCommand(key, members));
+	}
+
+	@Override
+	public void zremrangeByScore(String key, double start, double end) {
+		this.execCommand(new ZremerangeByScoreCommand(key, start, end));
+	}
+
+	@Override
+	public void zremrangeByRank(String key, long start, long end) {
+		this.execCommand(new ZremerangeByRankCommand(key, start, end));
 	}
 
 }

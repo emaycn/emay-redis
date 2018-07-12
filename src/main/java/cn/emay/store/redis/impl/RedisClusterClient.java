@@ -169,7 +169,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 	/* BASE */
 
 	@Override
-	public <T> T exec(RedisCommand<T> command) {
+	public <T> T execCommand(RedisCommand<T> command) {
 		try {
 			return command.commond(getClient());
 		} catch (Exception e) {
