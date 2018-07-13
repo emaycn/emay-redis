@@ -101,7 +101,7 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 			return;
 		}
 		datePattern = properties.getProperty("datePattern") == null ? "yyyy-MM-dd HH:mm:ss" : properties.getProperty("datePattern");
-		String host = properties.getProperty("host");
+		String host = properties.getProperty("host").trim();
 		int port = Integer.valueOf(properties.getProperty("port"));
 		int timeout = Integer.valueOf(properties.getProperty("timeout"));
 		JedisPoolConfig poolConfig = new JedisPoolConfig();

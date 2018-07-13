@@ -16,8 +16,6 @@ import cn.emay.store.redis.define.RedisString;
  */
 public interface RedisClient extends RedisCommon, RedisString, RedisHash, RedisList, RedisSet, RedisSortedSet {
 
-	/* BASE */
-
 	/**
 	 * 执行
 	 * 

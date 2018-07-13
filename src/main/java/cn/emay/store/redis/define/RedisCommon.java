@@ -8,7 +8,7 @@ public interface RedisCommon {
 	 * @param name
 	 * @return
 	 */
-	public boolean exists(String name);
+	public boolean exists(String key);
 
 	/**
 	 * 删除

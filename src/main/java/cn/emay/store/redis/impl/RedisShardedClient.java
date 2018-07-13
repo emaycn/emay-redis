@@ -38,7 +38,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	 * 实例化并初始化
 	 * 
 	 * @param hosts
-	 *            redis分片集群地址
+	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
 	 * @param port
 	 *            redis端口
 	 * @param timeout
@@ -60,7 +60,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	 * 实例化并初始化
 	 * 
 	 * @param hosts
-	 *            redis分片集群地址
+	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
 	 * @param port
 	 *            redis端口
 	 * @param timeout
@@ -110,26 +110,29 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
 		String hosts = properties.getProperty("hosts");
 		int timeout = Integer.valueOf(properties.getProperty("timeout"));
-		String[] hostses = hosts.split(",");
 		List<JedisShardInfo> infoList = new ArrayList<>();
-		for (String host : hostses) {
-			host = host.trim();
-			if(host.length() == 0) {
-				continue;
+		String[] hostses = hosts.split(",");
+		for (String hostitem : hostses) {
+			String[] hosten = hostitem.split(";");
+			for(String host : hosten) {
+				host = host.trim();
+				if(host.length() == 0) {
+					continue;
+				}
+				String[] ipAndPortArray = host.split(":");
+				if (ipAndPortArray.length != 2) {
+					throw new RuntimeException("host : " + host + " is error ! ");
+				}
+				int port;
+				String ip = ipAndPortArray[0].trim();
+				try {
+					port = Integer.valueOf(ipAndPortArray[1].trim());
+				} catch (Exception e) {
+					throw new RuntimeException(" port  is must number ! ");
+				}
+				JedisShardInfo shardInfo = new JedisShardInfo(ip, port, timeout);
+				infoList.add(shardInfo);
 			}
-			String[] ipAndPortArray = host.split(":");
-			if (ipAndPortArray.length != 2) {
-				throw new RuntimeException("host : " + host + " is error ! ");
-			}
-			int port;
-			String ip = ipAndPortArray[0];
-			try {
-				port = Integer.valueOf(ipAndPortArray[1]);
-			} catch (Exception e) {
-				throw new RuntimeException(" port  is must number ! ");
-			}
-			JedisShardInfo shardInfo = new JedisShardInfo(ip, port, timeout);
-			infoList.add(shardInfo);
 		}
 		jedisPool = new ShardedJedisPool(poolConfig, infoList);
 		Runtime.getRuntime().addShutdownHook(new Thread() {

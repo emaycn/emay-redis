@@ -71,7 +71,7 @@ public abstract class RedisBaseClient implements RedisClient {
 	/* COMMON */
 
 	@Override
-	public boolean exists(final String key) {
+	public boolean exists(String key) {
 		return this.execCommand(new ExistsCommand(key));
 	}
 
@@ -81,7 +81,7 @@ public abstract class RedisBaseClient implements RedisClient {
 	}
 
 	@Override
-	public void expire(final String key, final int seconds) {
+	public void expire(String key, int seconds) {
 		this.execCommand(new ExpireCommand(key, seconds));
 	}
 

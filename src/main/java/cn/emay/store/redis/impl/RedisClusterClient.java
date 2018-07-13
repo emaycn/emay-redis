@@ -39,7 +39,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 	 * 实例化并初始化
 	 * 
 	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port,
+	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
 	 * @param timeout
 	 *            超时时间
 	 * @param maxRedirections
@@ -61,7 +61,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 	 * 实例化并初始化
 	 * 
 	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port,
+	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
 	 * @param timeout
 	 *            超时时间
 	 * @param maxRedirections
@@ -115,19 +115,26 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
 		Set<HostAndPort> set = new HashSet<HostAndPort>();
 		String[] hostses = hosts.split(",");
-		for (String host : hostses) {
-			String[] ipAndPortArray = host.split(":");
-			if (ipAndPortArray.length != 2) {
-				throw new RuntimeException("host : " + host + " is error ! ");
+		for (String hostitem : hostses) {
+			String[] hosten = hostitem.split(";");
+			for(String host : hosten) {
+				host = host.trim();
+				if(host.length() == 0) {
+					continue;
+				}
+				String[] ipAndPortArray = host.split(":");
+				if (ipAndPortArray.length != 2) {
+					throw new RuntimeException("host : " + host + " is error ! ");
+				}
+				int port;
+				String ip = ipAndPortArray[0].trim();
+				try {
+					port = Integer.valueOf(ipAndPortArray[1].trim());
+				} catch (Exception e) {
+					throw new RuntimeException(" port  is must number ! ");
+				}
+				set.add(new HostAndPort(ip, port));
 			}
-			int port;
-			String ip = ipAndPortArray[0];
-			try {
-				port = Integer.valueOf(ipAndPortArray[1]);
-			} catch (Exception e) {
-				throw new RuntimeException(" port  is must number ! ");
-			}
-			set.add(new HostAndPort(ip, port));
 		}
 		jedisCluster = new JedisCluster(set, timeout, maxRedirections, poolConfig);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
