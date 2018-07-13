@@ -12,12 +12,12 @@ import redis.clients.jedis.Tuple;
 public class ZrevrangeByScoreCommand implements RedisCommand<Set<Tuple>> {
 
 	private String key;
-	
+
 	private double min;
-	
+
 	private double max;
 
-	public ZrevrangeByScoreCommand(String key,double min,double max) {
+	public ZrevrangeByScoreCommand(String key, double min, double max) {
 		this.key = key;
 		this.min = min;
 		this.max = max;
@@ -39,7 +39,7 @@ public class ZrevrangeByScoreCommand implements RedisCommand<Set<Tuple>> {
 	}
 
 	private Set<Tuple> exec(JedisCommands command) {
-		return command.zrevrangeByScoreWithScores(key, min, max);
+		return command.zrevrangeByScoreWithScores(key, max, min);
 	}
 
 }

@@ -14,6 +14,7 @@ import cn.emay.store.redis.impl.RedisSingleClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.Tuple;
 
 /**
  * Redis 测试
@@ -27,18 +28,134 @@ public class TestRedis {
 
 	public static void main(String[] args) throws InterruptedException {
 		redis = RedisSingleClient();
-		// redis = RedisClusterClient();
-		// redis = RedisShardedClient();
-		testBase();
-		testCommon();
-		testHash();
-		testString();
-		testList();
-		testSet();
+//		 redis = RedisClusterClient();
+//		 redis = RedisShardedClient();
+		 testBase();
+		 testCommon();
+		 testHash();
+		 testString();
+		 testList();
+		 testSet();
 		testSortedSet();
 	}
 
 	protected static void testSortedSet() {
+		String key = "testSortedSet";
+		redis.del(key);
+
+		Map<String, Double> map = new HashMap<>();
+		map.put("a", 1.0d);
+		map.put("b", 1.5d);
+		map.put("c", 2.0d);
+		map.put("d", -2.0d);
+
+		redis.zadd(key, 0d, "0");
+		printIsRight("zadd " + key + " " + "0" + " " + 0d, true);
+		redis.zadd(key, map);
+		printIsRight("zadd " + key + " " + map, true);
+		long length = redis.zcard(key);
+		printIsRight("zcard " + key, length == 5);
+		double sc = redis.zscore(key, "0");
+		printIsRight("zscore " + key + " " + "0", sc == 0d);
+		long rn = redis.zrank(key, "0");
+		printIsRight("zrank " + key + " " + "0", rn == 1);
+		long ren = redis.zrevrank(key, "0");
+		printIsRight("zrevrank " + key + " " + "0", ren == 3);
+		long count = redis.zcount(key, 0d, 2d);
+		printIsRight("zcount " + key + " 0d 2d", count == 4);
+
+		Set<Tuple> set = redis.zrangeByScoreWithScores(key, 0d, 1.5d);
+		String s = "";
+		boolean isOk = set.size() == 3;
+		int i = 0;
+		for (Tuple t : set) {
+			if (i == 0) {
+				isOk &= t.getScore() == 0d;
+			} else if (i == 1) {
+				isOk &= t.getScore() == 1d;
+			} else if (i == 2) {
+				isOk &= t.getScore() == 1.5d;
+			}
+			s += (t.getElement() + "=" + t.getScore() + ";");
+			i++;
+		}
+		printIsRight("zrangeByScoreWithScores " + s, isOk );
+		
+		set = redis.zrevrangeByScoreWithScores(key, 0d, 1.5d);
+		s = "";
+		isOk = set.size() == 3;
+		i = 0;
+		for (Tuple t : set) {
+			if (i == 2) {
+				isOk &= t.getScore() == 0d;
+			} else if (i == 1) {
+				isOk &= t.getScore() == 1d;
+			} else if (i == 0) {
+				isOk &= t.getScore() == 1.5d;
+			}
+			s += (t.getElement() + "=" + t.getScore() + ";");
+			i++;
+		}
+		printIsRight("zrevrangeByScoreWithScores " + s, isOk );
+		
+		set = redis.zrangeByScoreWithScores(key, 0d, 1.5d, 0, 2);
+		s = "";
+		isOk = set.size() == 2;
+		i = 0;
+		for (Tuple t : set) {
+			if (i == 0) {
+				isOk &= t.getScore() == 0d;
+			} else if (i == 1) {
+				isOk &= t.getScore() == 1d;
+			}
+			s += (t.getElement() + "=" + t.getScore() + ";");
+			i++;
+		}
+		printIsRight("zrangeByScoreWithScores " + s, isOk );
+		
+		set = redis.zrevrangeByScoreWithScores(key, 0d, 1.5d, 0, 2);
+		s = "";
+		isOk = set.size() == 2;
+		i = 0;
+		for (Tuple t : set) {
+			if (i == 0) {
+				isOk &= t.getScore() == 1.5d;
+			} else if (i == 1) {
+				isOk &= t.getScore() == 1d;
+			}
+			s += (t.getElement() + "=" + t.getScore() + ";");
+			i++;
+		}
+		printIsRight("zrevrangeByScoreWithScores " + s, isOk );
+		
+		Set<String> sst = redis.zrange(key, 0, -1);
+		isOk = true;
+		isOk &= sst.contains("0");
+		isOk &= sst.contains("d");
+		isOk &= sst.contains("a");
+		isOk &= sst.contains("b");
+		isOk &= sst.contains("c");
+		printIsRight("zrange " + sst, isOk );
+		
+		sst = redis.zrevrange(key, 0, 2);
+		isOk = true;
+		isOk &= sst.contains("c");
+		isOk &= sst.contains("b");
+		isOk &= sst.contains("a");
+		printIsRight("zrevrange " + sst, isOk );
+		
+		redis.zremrangeByScore(key, 0d, 1.5d);
+		length = redis.zcard(key);
+		printIsRight("zcard " + key, length == 2);
+		redis.zremrangeByRank(key, 0, 0);
+		length = redis.zcard(key);
+		printIsRight("zcard " + key, length == 1);
+		redis.zrem(key, "c");
+		length = redis.zcard(key);
+		printIsRight("zcard " + key, length == 0);
+
+		printIsRight("**SortedSet测试**", true);
+		redis.del(key);
 
 	}
 
@@ -507,11 +624,11 @@ public class TestRedis {
 	}
 
 	protected static RedisClusterClient RedisClusterClient() {
-		return new RedisClusterClient("127.0.0.1:6379,127.0.0.1:6378,127.0.0.1:6377,127.0.0.1:6376,127.0.0.1:6375,127.0.0.1:6374", 2000, 6, 4, 8, 1, 2000);
+		return new RedisClusterClient("100.100.10.90:16179,100.100.10.90:16279,100.100.10.90:16379,100.100.10.93:16479,100.100.10.93:16579,100.100.10.93:16679", 2000, 6, 4, 8, 1, 2000);
 	}
 
 	protected static RedisShardedClient RedisShardedClient() {
-		return new RedisShardedClient("127.0.0.1:6379", 2000, 4, 8, 1, 2000);
+		return new RedisShardedClient("127.0.0.1:6379;100.100.10.92:6379", 2000, 4, 8, 1, 2000);
 	}
 
 	protected static RedisSingleClient RedisSingleClient() {

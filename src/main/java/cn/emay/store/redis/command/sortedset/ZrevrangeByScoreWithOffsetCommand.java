@@ -45,7 +45,7 @@ public class ZrevrangeByScoreWithOffsetCommand implements RedisCommand<Set<Tuple
 	}
 
 	private Set<Tuple> exec(JedisCommands command) {
-		return command.zrevrangeByScoreWithScores(key, min, max, offset, count);
+		return command.zrevrangeByScoreWithScores(key, max, min, offset, count);
 	}
 
 }
