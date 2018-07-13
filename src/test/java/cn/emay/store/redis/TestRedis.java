@@ -33,10 +33,34 @@ public class TestRedis {
 		testBase();
 		testCommon();
 		testHash();
+		testString();
 	}
-	
+
 	protected static void testString() {
+
+		String key = "testString";
+		boolean isok = redis.setnx(key, 1, 5);
+		printIsRight("setnx " + key + " " + 1, isok);
+		isok = redis.setnx(key, 2, 5);
+		printIsRight("setnx " + key + " " + 2, !isok);
+		int number = redis.get(key,Integer.class);
+		printIsRight("get " + key, number == 1);
+		redis.set(key, 3, 5);
+		printIsRight("set " + key + " " + 3, true);
+		number = redis.get(key,Integer.class);
+		printIsRight("get " + key, number == 3);
+		long result = redis.incr(key);
+		printIsRight("incr " + key, result == 4);
+		result = redis.incrBy(key, 2);
+		printIsRight("incrBy " + key + " " + 2, result == 6);
+		result = redis.decr(key);
+		printIsRight("decr " + key, result == 5);
+		result = redis.decrBy(key, 2);
+		printIsRight("decrBy " + key + " " + 2, result == 3);
 		
+		printIsRight("**String测试**", true);
+		
+		redis.del(key);
 	}
 
 	protected static void testHash() {
