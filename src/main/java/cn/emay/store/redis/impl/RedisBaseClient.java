@@ -311,8 +311,8 @@ public abstract class RedisBaseClient implements RedisClient {
 	}
 
 	@Override
-	public long srem(String key, Object... members) {
-		return this.execCommand(new SremCommand(key, getDatePattern(), members));
+	public void srem(String key, Object... members) {
+		this.execCommand(new SremCommand(key, getDatePattern(), members));
 	}
 
 	@Override

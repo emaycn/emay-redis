@@ -98,9 +98,9 @@ public interface RedisSet {
 	 * 
 	 * @param key
 	 * @param members
-	 * @return SET长度
+	 * @return 
 	 */
-	public long srem(String key, Object... members);
+	public void srem(String key, Object... members);
 
 	/**
 	 * 检测值是否在set中
