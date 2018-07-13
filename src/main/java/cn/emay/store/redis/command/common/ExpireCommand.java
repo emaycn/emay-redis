@@ -28,7 +28,7 @@ public class ExpireCommand implements RedisCommand<Void> {
 		this.exec(client);
 		return null;
 	}
-	
+
 	@Override
 	public Void commond(ShardedJedis client) {
 		this.exec(client);

@@ -9,10 +9,10 @@ import redis.clients.jedis.ShardedJedis;
 public class HexistsCommand implements RedisCommand<Boolean> {
 
 	private String key;
-	
+
 	private String fieldname;
 
-	public HexistsCommand(String key,String fieldname) {
+	public HexistsCommand(String key, String fieldname) {
 		this.fieldname = fieldname;
 		this.key = key;
 	}
@@ -26,7 +26,7 @@ public class HexistsCommand implements RedisCommand<Boolean> {
 	public Boolean commond(JedisCluster client) {
 		return this.exec(client);
 	}
-	
+
 	@Override
 	public Boolean commond(ShardedJedis client) {
 		return this.exec(client);

@@ -11,7 +11,7 @@ public class ZcountCommand implements RedisCommand<Long> {
 	private String key;
 
 	private double min;
-	
+
 	private double max;
 
 	public ZcountCommand(String key, double min, double max) {

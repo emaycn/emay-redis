@@ -12,12 +12,12 @@ import redis.clients.jedis.Tuple;
 public class ZrangeByScoreCommand implements RedisCommand<Set<Tuple>> {
 
 	private String key;
-	
+
 	private double min;
-	
+
 	private double max;
 
-	public ZrangeByScoreCommand(String key,double min,double max) {
+	public ZrangeByScoreCommand(String key, double min, double max) {
 		this.key = key;
 		this.min = min;
 		this.max = max;

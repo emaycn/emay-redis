@@ -52,7 +52,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	 * @param maxWaitMillis
 	 *            最大等待时间
 	 */
-	public RedisShardedClient(String hosts,  int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
+	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
 		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
 	}
 
@@ -114,9 +114,9 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 		String[] hostses = hosts.split(",");
 		for (String hostitem : hostses) {
 			String[] hosten = hostitem.split(";");
-			for(String host : hosten) {
+			for (String host : hosten) {
 				host = host.trim();
-				if(host.length() == 0) {
+				if (host.length() == 0) {
 					continue;
 				}
 				String[] ipAndPortArray = host.split(":");
@@ -158,7 +158,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 	public void close() {
 		jedisPool.close();
 	}
-	
+
 	public Properties getProperties() {
 		return properties;
 	}

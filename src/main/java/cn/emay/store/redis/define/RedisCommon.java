@@ -1,7 +1,7 @@
 package cn.emay.store.redis.define;
 
 public interface RedisCommon {
-	
+
 	/**
 	 * 是否存在
 	 * 

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface RedisHash {
-	
+
 	/**
 	 * 删除hash中的多个字段
 	 * 

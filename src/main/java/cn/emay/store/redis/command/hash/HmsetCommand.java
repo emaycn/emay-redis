@@ -42,7 +42,7 @@ public class HmsetCommand implements RedisCommand<Void> {
 		this.exec(client, null, client);
 		return null;
 	}
-	
+
 	@Override
 	public Void commond(ShardedJedis client) {
 		this.exec(client, client, null);

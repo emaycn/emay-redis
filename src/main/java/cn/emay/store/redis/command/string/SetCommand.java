@@ -39,7 +39,7 @@ public class SetCommand implements RedisCommand<Void> {
 		this.exec(client, null, client);
 		return null;
 	}
-	
+
 	@Override
 	public Void commond(ShardedJedis client) {
 		this.exec(client, client, null);
@@ -53,13 +53,13 @@ public class SetCommand implements RedisCommand<Void> {
 				if (expireTime > 0) {
 					if (bjcommand != null) {
 						bjcommand.setex(key.getBytes("UTF-8"), expireTime, valuebytes);
-					}else if (bjccommand != null) {
+					} else if (bjccommand != null) {
 						bjccommand.setex(key.getBytes("UTF-8"), expireTime, valuebytes);
 					}
 				} else {
 					if (bjcommand != null) {
 						bjcommand.set(key.getBytes("UTF-8"), valuebytes);
-					}else if (bjccommand != null) {
+					} else if (bjccommand != null) {
 						bjccommand.set(key.getBytes("UTF-8"), valuebytes);
 					}
 				}

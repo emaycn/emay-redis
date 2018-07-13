@@ -40,7 +40,7 @@ public class HsetnxCommand implements RedisCommand<Boolean> {
 	public Boolean commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public Boolean commond(ShardedJedis client) {
 		return this.exec(client, client, null);
@@ -52,7 +52,7 @@ public class HsetnxCommand implements RedisCommand<Boolean> {
 			if (byte[].class.isAssignableFrom(value.getClass())) {
 				if (bjcommand != null) {
 					number = bjcommand.hsetnx(key.getBytes("UTF-8"), fieldname.getBytes("UTF-8"), (byte[]) value);
-				}else if (bjccommand != null) {
+				} else if (bjccommand != null) {
 					number = bjccommand.hsetnx(key.getBytes("UTF-8"), fieldname.getBytes("UTF-8"), (byte[]) value);
 				}
 			} else if (String.class.isAssignableFrom(value.getClass())) {

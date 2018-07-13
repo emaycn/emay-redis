@@ -1,7 +1,7 @@
 package cn.emay.store.redis.define;
 
 public interface RedisString {
-	
+
 	/**
 	 * 存储数据<br/>
 	 * 非String、byte[]的类型，将会被JsonHelper序列化<br/>

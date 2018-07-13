@@ -42,7 +42,7 @@ public class HsetCommand implements RedisCommand<Void> {
 		this.exec(client, null, client);
 		return null;
 	}
-	
+
 	@Override
 	public Void commond(ShardedJedis client) {
 		this.exec(client, client, null);
@@ -54,7 +54,7 @@ public class HsetCommand implements RedisCommand<Void> {
 			if (byte[].class.isAssignableFrom(value.getClass())) {
 				if (bjcommand != null) {
 					bjcommand.hset(key.getBytes("UTF-8"), fieldname.getBytes("UTF-8"), (byte[]) value);
-				}else if (bjccommand != null) {
+				} else if (bjccommand != null) {
 					bjccommand.hset(key.getBytes("UTF-8"), fieldname.getBytes("UTF-8"), (byte[]) value);
 				}
 			} else if (String.class.isAssignableFrom(value.getClass())) {

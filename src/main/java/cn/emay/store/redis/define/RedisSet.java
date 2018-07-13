@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface RedisSet {
-	
+
 	/**
 	 * set 长度
 	 * 
@@ -98,7 +98,7 @@ public interface RedisSet {
 	 * 
 	 * @param key
 	 * @param members
-	 * @return 
+	 * @return
 	 */
 	public void srem(String key, Object... members);
 

@@ -9,10 +9,10 @@ import redis.clients.jedis.ShardedJedis;
 public class ZscoreCommand implements RedisCommand<Double> {
 
 	private String key;
-	
+
 	private String member;
 
-	public ZscoreCommand(String key,String member) {
+	public ZscoreCommand(String key, String member) {
 		this.key = key;
 		this.member = member;
 	}

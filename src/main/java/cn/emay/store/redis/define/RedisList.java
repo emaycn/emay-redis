@@ -3,7 +3,7 @@ package cn.emay.store.redis.define;
 import java.util.List;
 
 public interface RedisList {
-	
+
 	/**
 	 * list长度
 	 * 

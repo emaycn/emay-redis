@@ -9,10 +9,10 @@ import redis.clients.jedis.ShardedJedis;
 public class ZrevrankCommand implements RedisCommand<Long> {
 
 	private String key;
-	
+
 	private String member;
 
-	public ZrevrankCommand(String key,String member) {
+	public ZrevrankCommand(String key, String member) {
 		this.key = key;
 		this.member = member;
 	}

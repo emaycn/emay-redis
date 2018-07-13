@@ -117,9 +117,9 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 		String[] hostses = hosts.split(",");
 		for (String hostitem : hostses) {
 			String[] hosten = hostitem.split(";");
-			for(String host : hosten) {
+			for (String host : hosten) {
 				host = host.trim();
-				if(host.length() == 0) {
+				if (host.length() == 0) {
 					continue;
 				}
 				String[] ipAndPortArray = host.split(":");
@@ -164,7 +164,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public Properties getProperties() {
 		return properties;
 	}

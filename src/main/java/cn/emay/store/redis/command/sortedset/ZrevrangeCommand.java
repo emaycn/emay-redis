@@ -11,12 +11,12 @@ import redis.clients.jedis.ShardedJedis;
 public class ZrevrangeCommand implements RedisCommand<Set<String>> {
 
 	private String key;
-	
+
 	private long start;
-	
+
 	private long end;
 
-	public ZrevrangeCommand(String key,long start,long end) {
+	public ZrevrangeCommand(String key, long start, long end) {
 		this.key = key;
 		this.start = start;
 		this.end = end;

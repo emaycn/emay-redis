@@ -37,7 +37,7 @@ public class SetnxCommand implements RedisCommand<Boolean> {
 	public Boolean commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public Boolean commond(ShardedJedis client) {
 		return this.exec(client, client, null);
@@ -50,7 +50,7 @@ public class SetnxCommand implements RedisCommand<Boolean> {
 			try {
 				if (bjCommand != null) {
 					number = bjCommand.setnx(key.getBytes("UTF-8"), valuebytes);
-				}else if (bjcCommand != null) {
+				} else if (bjcCommand != null) {
 					number = bjcCommand.setnx(key.getBytes("UTF-8"), valuebytes);
 				}
 			} catch (UnsupportedEncodingException e) {

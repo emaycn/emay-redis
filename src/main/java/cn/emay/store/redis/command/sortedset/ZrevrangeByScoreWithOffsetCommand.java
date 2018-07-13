@@ -12,16 +12,16 @@ import redis.clients.jedis.Tuple;
 public class ZrevrangeByScoreWithOffsetCommand implements RedisCommand<Set<Tuple>> {
 
 	private String key;
-	
+
 	private double min;
-	
+
 	private double max;
-	
-	private  int offset;
-	
+
+	private int offset;
+
 	private int count;
 
-	public ZrevrangeByScoreWithOffsetCommand(String key,double min,double max, int offset, int count) {
+	public ZrevrangeByScoreWithOffsetCommand(String key, double min, double max, int offset, int count) {
 		this.key = key;
 		this.min = min;
 		this.max = max;

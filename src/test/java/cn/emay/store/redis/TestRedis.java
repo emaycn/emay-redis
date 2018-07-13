@@ -28,14 +28,14 @@ public class TestRedis {
 
 	public static void main(String[] args) throws InterruptedException {
 		redis = RedisSingleClient();
-//		 redis = RedisClusterClient();
-//		 redis = RedisShardedClient();
-		 testBase();
-		 testCommon();
-		 testHash();
-		 testString();
-		 testList();
-		 testSet();
+		// redis = RedisClusterClient();
+		// redis = RedisShardedClient();
+		testBase();
+		testCommon();
+		testHash();
+		testString();
+		testList();
+		testSet();
 		testSortedSet();
 	}
 
@@ -79,8 +79,8 @@ public class TestRedis {
 			s += (t.getElement() + "=" + t.getScore() + ";");
 			i++;
 		}
-		printIsRight("zrangeByScoreWithScores " + s, isOk );
-		
+		printIsRight("zrangeByScoreWithScores " + s, isOk);
+
 		set = redis.zrevrangeByScoreWithScores(key, 0d, 1.5d);
 		s = "";
 		isOk = set.size() == 3;
@@ -96,8 +96,8 @@ public class TestRedis {
 			s += (t.getElement() + "=" + t.getScore() + ";");
 			i++;
 		}
-		printIsRight("zrevrangeByScoreWithScores " + s, isOk );
-		
+		printIsRight("zrevrangeByScoreWithScores " + s, isOk);
+
 		set = redis.zrangeByScoreWithScores(key, 0d, 1.5d, 0, 2);
 		s = "";
 		isOk = set.size() == 2;
@@ -111,8 +111,8 @@ public class TestRedis {
 			s += (t.getElement() + "=" + t.getScore() + ";");
 			i++;
 		}
-		printIsRight("zrangeByScoreWithScores " + s, isOk );
-		
+		printIsRight("zrangeByScoreWithScores " + s, isOk);
+
 		set = redis.zrevrangeByScoreWithScores(key, 0d, 1.5d, 0, 2);
 		s = "";
 		isOk = set.size() == 2;
@@ -126,8 +126,8 @@ public class TestRedis {
 			s += (t.getElement() + "=" + t.getScore() + ";");
 			i++;
 		}
-		printIsRight("zrevrangeByScoreWithScores " + s, isOk );
-		
+		printIsRight("zrevrangeByScoreWithScores " + s, isOk);
+
 		Set<String> sst = redis.zrange(key, 0, -1);
 		isOk = true;
 		isOk &= sst.contains("0");
@@ -135,15 +135,15 @@ public class TestRedis {
 		isOk &= sst.contains("a");
 		isOk &= sst.contains("b");
 		isOk &= sst.contains("c");
-		printIsRight("zrange " + sst, isOk );
-		
+		printIsRight("zrange " + sst, isOk);
+
 		sst = redis.zrevrange(key, 0, 2);
 		isOk = true;
 		isOk &= sst.contains("c");
 		isOk &= sst.contains("b");
 		isOk &= sst.contains("a");
-		printIsRight("zrevrange " + sst, isOk );
-		
+		printIsRight("zrevrange " + sst, isOk);
+
 		redis.zremrangeByScore(key, 0d, 1.5d);
 		length = redis.zcard(key);
 		printIsRight("zcard " + key, length == 2);

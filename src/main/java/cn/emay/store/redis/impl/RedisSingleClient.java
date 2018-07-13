@@ -133,7 +133,7 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 	public void close() {
 		jedisPool.close();
 	}
-	
+
 	public Properties getProperties() {
 		return properties;
 	}

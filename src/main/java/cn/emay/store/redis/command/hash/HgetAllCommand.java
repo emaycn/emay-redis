@@ -37,7 +37,7 @@ public class HgetAllCommand<K> implements RedisCommand<Map<String, K>> {
 	public Map<String, K> commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public Map<String, K> commond(ShardedJedis client) {
 		return this.exec(client, client, null);
@@ -70,7 +70,7 @@ public class HgetAllCommand<K> implements RedisCommand<Map<String, K>> {
 				}
 				Map<String, K> map1 = new HashMap<>();
 				for (Entry<String, String> entry : map.entrySet()) {
-					map1.put(entry.getKey(), JsonHelper.fromJson(clazz, entry.getValue(),datePattern));
+					map1.put(entry.getKey(), JsonHelper.fromJson(clazz, entry.getValue(), datePattern));
 				}
 				return map1;
 			}

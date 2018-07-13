@@ -23,7 +23,7 @@ public class LlenCommand implements RedisCommand<Long> {
 	public Long commond(JedisCluster client) {
 		return this.exec(client);
 	}
-	
+
 	@Override
 	public Long commond(ShardedJedis client) {
 		return this.exec(client);

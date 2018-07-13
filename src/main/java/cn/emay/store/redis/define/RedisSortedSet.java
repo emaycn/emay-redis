@@ -6,7 +6,7 @@ import java.util.Set;
 import redis.clients.jedis.Tuple;
 
 public interface RedisSortedSet {
-	
+
 	/**
 	 * 放入键、成员、评分
 	 * 
@@ -96,7 +96,7 @@ public interface RedisSortedSet {
 	public Set<String> zrevrangeByScore(String key, double min, double max);
 
 	/**
-	 * 按照评分获取有序集合成员及其评分,限定min与max之间的评分(从小到大)，包含min和max  <br/>
+	 * 按照评分获取有序集合成员及其评分,限定min与max之间的评分(从小到大)，包含min和max <br/>
 	 * getElement = getMember
 	 * 
 	 * @param key
@@ -134,7 +134,7 @@ public interface RedisSortedSet {
 
 	/**
 	 * 按照评分获取有序集合成员,限定min与max之间的评分 (从大到小)<br/>
-	 * 包含min和max 
+	 * 包含min和max
 	 * 
 	 * @param key
 	 * @param min

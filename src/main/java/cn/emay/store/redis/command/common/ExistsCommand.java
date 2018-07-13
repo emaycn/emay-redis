@@ -23,7 +23,7 @@ public class ExistsCommand implements RedisCommand<Boolean> {
 	public Boolean commond(JedisCluster client) {
 		return this.exec(client);
 	}
-	
+
 	@Override
 	public Boolean commond(ShardedJedis client) {
 		return this.exec(client);
@@ -32,7 +32,5 @@ public class ExistsCommand implements RedisCommand<Boolean> {
 	private Boolean exec(JedisCommands command) {
 		return command.exists(key);
 	}
-
-	
 
 }

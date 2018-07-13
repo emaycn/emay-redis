@@ -9,10 +9,10 @@ import redis.clients.jedis.ShardedJedis;
 public class DecrByCommand implements RedisCommand<Long> {
 
 	private String key;
-	
+
 	private long number;
 
-	public DecrByCommand(String key,long number) {
+	public DecrByCommand(String key, long number) {
 		this.key = key;
 		this.number = number;
 	}
@@ -26,14 +26,14 @@ public class DecrByCommand implements RedisCommand<Long> {
 	public Long commond(JedisCluster client) {
 		return this.exec(client);
 	}
-	
+
 	@Override
 	public Long commond(ShardedJedis client) {
 		return this.exec(client);
 	}
 
 	private Long exec(JedisCommands command) {
-		return command.decrBy(key,number);
+		return command.decrBy(key, number);
 	}
 
 }

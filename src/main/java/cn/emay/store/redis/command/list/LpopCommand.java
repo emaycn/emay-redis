@@ -19,7 +19,7 @@ public class LpopCommand<K> implements RedisCommand<K> {
 
 	private String datePattern;
 
-	public LpopCommand(String key,  Class<K> clazz, String datePattern) {
+	public LpopCommand(String key, Class<K> clazz, String datePattern) {
 		this.key = key;
 		this.clazz = clazz;
 		this.datePattern = datePattern;
@@ -34,7 +34,7 @@ public class LpopCommand<K> implements RedisCommand<K> {
 	public K commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public K commond(ShardedJedis client) {
 		return this.exec(client, client, null);
@@ -55,7 +55,7 @@ public class LpopCommand<K> implements RedisCommand<K> {
 				return (K) command.lpop(key);
 			} else {
 				String value = command.lpop(key);
-				return value == null ? null : JsonHelper.fromJson(clazz, value,datePattern);
+				return value == null ? null : JsonHelper.fromJson(clazz, value, datePattern);
 			}
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);

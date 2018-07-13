@@ -39,7 +39,7 @@ public class HmgetCommand<K> implements RedisCommand<List<K>> {
 	public List<K> commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public List<K> commond(ShardedJedis client) {
 		return this.exec(client, client, null);

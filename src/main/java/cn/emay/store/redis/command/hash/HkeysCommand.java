@@ -25,7 +25,7 @@ public class HkeysCommand implements RedisCommand<Set<String>> {
 	public Set<String> commond(JedisCluster client) {
 		return this.exec(client);
 	}
-	
+
 	@Override
 	public Set<String> commond(ShardedJedis client) {
 		return this.exec(client);

@@ -39,7 +39,7 @@ public class RpushCommand implements RedisCommand<Long> {
 	public Long commond(JedisCluster client) {
 		return this.exec(client, null, client);
 	}
-	
+
 	@Override
 	public Long commond(ShardedJedis client) {
 		return this.exec(client, client, null);
