@@ -34,20 +34,89 @@ public class TestRedis {
 		testCommon();
 		testHash();
 		testString();
+		testList();
+	}
+
+	protected static void testList() {
+		String key = "testList";
+		redis.del(key);
+		
+		byte[] value1 = { 0, 1, 1, 0 };
+		byte[] value11 = { 1, 1, 1, 1 };
+		String value2 = "thisis my 110";
+		String value22 = "thisis my 1101";
+		TtlCommand value3 = new TtlCommand(key);
+		TtlCommand value33 = new TtlCommand(key + 1);
+		
+		long length = redis.lpush(key, -1, value1,value11);
+		printIsRight("lpush " + key + " " + value1 + " " + value11, length == 2);
+		long length1 = redis.llen(key);
+		printIsRight("llen " + key , length1 == 2);
+		byte[] b1 = redis.rpop(key, byte[].class);
+		printIsRight("rpop " + key , Arrays.equals(b1, value1));
+		long length2 = redis.llen(key);
+		printIsRight("llen " + key , length2 == 1);
+		byte[] b2 = redis.rpop(key, byte[].class);
+		printIsRight("rpop " + key , Arrays.equals(b2, value11));
+		long length3 = redis.llen(key);
+		printIsRight("llen " + key , length3 == 0);
+		
+		redis.lpush(key, -1, value2,value22);
+		printIsRight("lpush " + key + " " + value2 + " " + value22,true);
+		String s1 = redis.lpop(key);
+		printIsRight("lpop " + key , s1.equals(value22));
+		String s2 = redis.lpop(key);
+		printIsRight("lpop " + key , s2.equals(value2));
+		long length4 = redis.llen(key);
+		printIsRight("llen " + key , length4 == 0);
+		
+		redis.rpush(key, -1, value3,value33);
+		printIsRight("rpush " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33),true);
+		TtlCommand t1 = redis.rpop(key,TtlCommand.class);
+		printIsRight("rpop " + key , JsonHelper.toJsonString(t1).equals(JsonHelper.toJsonString(value33)));
+		TtlCommand t2 = redis.lpop(key,TtlCommand.class);
+		printIsRight("lpop " + key , JsonHelper.toJsonString(t2).equals(JsonHelper.toJsonString(value3)));
+		long length5 = redis.llen(key);
+		printIsRight("llen " + key , length5 == 0);
+		
+		
+		redis.lpush(key, -1, value1,value11);
+		printIsRight("lpush " + key + " " + value1 + " " + value11, length == 2);
+		List<byte[]> b11 = redis.lrange(key, 0, 0, byte[].class);
+		printIsRight("lrange " + key , b11.size() ==1 &&  Arrays.equals(b11.get(0), value11));
+		List<byte[]> b22 = redis.lrange(key, 1, 1, byte[].class);
+		printIsRight("lrange " + key , b22.size() ==1 &&  Arrays.equals(b22.get(0), value1));
+		redis.del(key);
+		
+		redis.lpush(key, -1, value2,value22);
+		printIsRight("lpush " + key + " " + value2 + " " + value22,true);
+		List<String> li = redis.lrange(key, 0, -1);
+		printIsRight("lrange " + key , li.size() ==2 &&  li.get(0).equals(value22) && li.get(1).equals(value2) );
+		redis.del(key);
+		
+		redis.rpush(key, -1, value3,value33);
+		printIsRight("rpush " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33),true);
+		List<TtlCommand> lc = redis.lrange(key, 0, -1,TtlCommand.class);
+		printIsRight("lrange " + key , lc.size() ==2 &&  JsonHelper.toJsonString(lc.get(0)).equals(JsonHelper.toJsonString(value3)) && JsonHelper.toJsonString(lc.get(1)).equals(JsonHelper.toJsonString(value33)) );
+		redis.del(key);
+
+		printIsRight("**List测试**", true);
+		redis.del(key);
 	}
 
 	protected static void testString() {
-
 		String key = "testString";
+		redis.del(key);
+		
 		boolean isok = redis.setnx(key, 1, 5);
 		printIsRight("setnx " + key + " " + 1, isok);
 		isok = redis.setnx(key, 2, 5);
 		printIsRight("setnx " + key + " " + 2, !isok);
-		int number = redis.get(key,Integer.class);
+		int number = redis.get(key, Integer.class);
 		printIsRight("get " + key, number == 1);
 		redis.set(key, 3, 5);
 		printIsRight("set " + key + " " + 3, true);
-		number = redis.get(key,Integer.class);
+		number = redis.get(key, Integer.class);
 		printIsRight("get " + key, number == 3);
 		long result = redis.incr(key);
 		printIsRight("incr " + key, result == 4);
@@ -57,15 +126,16 @@ public class TestRedis {
 		printIsRight("decr " + key, result == 5);
 		result = redis.decrBy(key, 2);
 		printIsRight("decrBy " + key + " " + 2, result == 3);
-		
+
 		printIsRight("**String测试**", true);
-		
+
 		redis.del(key);
 	}
 
 	protected static void testHash() {
 		String key = "testHash";
-
+		redis.del(key);
+		
 		{
 			Map<String, Object> params1 = new HashMap<>();
 			params1.put("11", "str1");
@@ -263,6 +333,8 @@ public class TestRedis {
 
 	protected static void testCommon() throws InterruptedException {
 		String key = "testCommon";
+		redis.del(key);
+		
 		TtlCommand ttlc = new TtlCommand(key);
 
 		redis.set(key, ttlc, 2);
@@ -306,6 +378,8 @@ public class TestRedis {
 
 	protected static void testBase() {
 		String key = "testbase";
+		redis.del(key);
+		
 		String value = redis.getDatePattern();
 		redis.execCommand(new RedisCommand<String>() {
 
@@ -356,7 +430,7 @@ public class TestRedis {
 
 	protected static void printIsRight(String log, boolean isRight) {
 		if (!isRight) {
-			System.err.println("测试失败:" + log);
+			System.err.println("测试未通过:" + log);
 			System.exit(-1);
 		} else {
 			System.out.println("测试通过:" + log);
