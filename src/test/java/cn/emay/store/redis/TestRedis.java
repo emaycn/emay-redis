@@ -171,7 +171,7 @@ public class TestRedis {
 		TestBean value33 = new TestBean(key + 1);
 
 		redis.sadd(key, -1, value1, value11);
-		printIsRight("sadd " + key + " " + value1 + " " + value11, true);
+		printIsRight("sadd " + key + " 0,1,1,0 1,1,1,1", true);
 		long length = redis.scard(key);
 		printIsRight("scard " + key, length == 2);
 		boolean b = redis.sismember(key, value1);
@@ -235,7 +235,7 @@ public class TestRedis {
 		TestBean value33 = new TestBean(key + 1);
 
 		long length = redis.lpush(key, -1, value1, value11);
-		printIsRight("lpush " + key + " " + value1 + " " + value11, length == 2);
+		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1" , length == 2);
 		long length1 = redis.llen(key);
 		printIsRight("llen " + key, length1 == 2);
 		byte[] b1 = redis.rpop(key, byte[].class);
@@ -266,7 +266,7 @@ public class TestRedis {
 		printIsRight("llen " + key, length5 == 0);
 
 		redis.lpush(key, -1, value1, value11);
-		printIsRight("lpush " + key + " " + value1 + " " + value11, length == 2);
+		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1", length == 2);
 		List<byte[]> b11 = redis.lrange(key, 0, 0, byte[].class);
 		printIsRight("lrange " + key, b11.size() == 1 && Arrays.equals(b11.get(0), value11));
 		List<byte[]> b22 = redis.lrange(key, 1, 1, byte[].class);
