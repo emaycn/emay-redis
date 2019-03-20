@@ -3,6 +3,7 @@ package cn.emay.store.redis.impl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import cn.emay.store.redis.RedisClient;
@@ -66,8 +67,31 @@ import redis.clients.jedis.Tuple;
  * @author Frank
  *
  */
-public abstract class RedisBaseClient implements RedisClient {
+public abstract class RedisBaseClient<C> implements RedisClient {
 
+	/* Controle */
+	
+	/**
+	 * 初始化
+	 */
+	public abstract void init() ;
+	
+	/**
+	 * 关闭客户端
+	 */
+	public abstract void close();
+	
+	/**
+	 * 获取客户端
+	 */
+	public abstract C getClient();
+	
+	/**
+	 * 注入初始化参数
+	 */
+	public abstract void setProperties(Properties properties);
+	
+	
 	/* COMMON */
 
 	@Override

@@ -18,7 +18,7 @@ import redis.clients.jedis.JedisCluster;
  * @author Frank
  *
  */
-public class RedisClusterClient extends RedisBaseClient implements RedisClient {
+public class RedisClusterClient extends RedisBaseClient<JedisCluster> implements RedisClient {
 
 	/**
 	 * 集群客户端
@@ -97,9 +97,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 
 	}
 
-	/**
-	 * 初始化
-	 */
+	@Override
 	public void init() {
 		if (jedisCluster != null) {
 			return;
@@ -145,18 +143,12 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 		});
 	}
 
-	/**
-	 * 获取集群客户端
-	 * 
-	 * @return
-	 */
+	@Override
 	public JedisCluster getClient() {
 		return jedisCluster;
 	}
 
-	/**
-	 * 关闭客户端
-	 */
+	@Override
 	public void close() {
 		try {
 			jedisCluster.close();
@@ -169,6 +161,7 @@ public class RedisClusterClient extends RedisBaseClient implements RedisClient {
 		return properties;
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}

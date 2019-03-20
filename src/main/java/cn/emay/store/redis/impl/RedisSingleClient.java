@@ -14,7 +14,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author Frank
  *
  */
-public class RedisSingleClient extends RedisBaseClient implements RedisClient {
+public class RedisSingleClient extends RedisBaseClient<JedisPool> implements RedisClient {
 
 	/**
 	 * 客户端连接池
@@ -93,9 +93,7 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 
 	}
 
-	/**
-	 * 初始化
-	 */
+	@Override
 	public void init() {
 		if (jedisPool != null) {
 			return;
@@ -118,18 +116,12 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 		});
 	}
 
-	/**
-	 * 获取客户端连接池
-	 * 
-	 * @return
-	 */
+	@Override
 	public JedisPool getClient() {
 		return jedisPool;
 	}
 
-	/**
-	 * 关闭客户端
-	 */
+	@Override
 	public void close() {
 		jedisPool.close();
 	}
@@ -138,6 +130,7 @@ public class RedisSingleClient extends RedisBaseClient implements RedisClient {
 		return properties;
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}

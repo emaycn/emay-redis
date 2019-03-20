@@ -17,7 +17,7 @@ import redis.clients.jedis.ShardedJedisPool;
  * @author Frank
  *
  */
-public class RedisShardedClient extends RedisBaseClient implements RedisClient {
+public class RedisShardedClient extends RedisBaseClient<ShardedJedisPool> implements RedisClient {
 
 	/**
 	 * 客户端连接池
@@ -95,9 +95,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 
 	}
 
-	/**
-	 * 初始化
-	 */
+	@Override
 	public void init() {
 		if (jedisPool != null) {
 			return;
@@ -143,18 +141,12 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 		});
 	}
 
-	/**
-	 * 获取客户端连接池
-	 * 
-	 * @return
-	 */
+	@Override
 	public ShardedJedisPool getClient() {
 		return jedisPool;
 	}
 
-	/**
-	 * 关闭客户端
-	 */
+	@Override
 	public void close() {
 		jedisPool.close();
 	}
@@ -163,6 +155,7 @@ public class RedisShardedClient extends RedisBaseClient implements RedisClient {
 		return properties;
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
