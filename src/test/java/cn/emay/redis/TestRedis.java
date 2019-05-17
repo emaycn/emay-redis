@@ -236,7 +236,7 @@ public class TestRedis {
 		TestBean value33 = new TestBean(key + 1);
 
 		long length = redis.lpush(key, -1, value1, value11);
-		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1" , length == 2);
+		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1", length == 2);
 		long length1 = redis.llen(key);
 		printIsRight("llen " + key, length1 == 2);
 		byte[] b1 = redis.rpop(key, byte[].class);

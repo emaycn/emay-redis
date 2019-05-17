@@ -51,7 +51,7 @@ public class SaddCommand implements RedisCommand<Long> {
 	}
 
 	private Long exec(JedisCommands command, BinaryJedisCommands bjcommand, BinaryJedisClusterCommands bjccommand) {
-		long result = 0 ;
+		long result = 0;
 		try {
 			List<String> strvalues = new ArrayList<>();
 			List<byte[]> bytvalues = new ArrayList<>();
