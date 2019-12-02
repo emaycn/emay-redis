@@ -63,7 +63,7 @@ public class HsetnxCommand implements RedisCommand<Boolean> {
 			} else if (String.class.isAssignableFrom(value.getClass())) {
 				number = command.hsetnx(key, fieldname, (String) value);
 			} else {
-				number = command.hsetnx(key, fieldname, JsonHelper.toJsonString(value, datePattern));
+				number = command.hsetnx(key, fieldname, JsonHelper.toJsonStringWithoutNull(value, datePattern));
 			}
 			if (number != 0) {
 				if (expireTime > 0) {

@@ -1,5 +1,6 @@
 package cn.emay.redis.define;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,11 +23,31 @@ public interface RedisSet {
 	 * 往set中增加值
 	 * 
 	 * @param key
+	 * @param value
+	 * @param expireTime
+	 * @return
+	 */
+	public long sadd(String key, int expireTime, Object value);
+	
+	/**
+	 * 往set中增加值
+	 * 
+	 * @param key
 	 * @param values
 	 * @param expireTime
 	 * @return
 	 */
-	public long sadd(String key, int expireTime, Object... values);
+	public long sadd(String key, int expireTime, Object[] values);
+	
+	/**
+	 * 往set中增加值
+	 * 
+	 * @param key
+	 * @param values
+	 * @param expireTime
+	 * @return
+	 */
+	public long sadd(String key, int expireTime, Collection<?> values);
 
 	/**
 	 * 随机获取并删除一个set的值
@@ -99,13 +120,31 @@ public interface RedisSet {
 	public Set<String> smembers(String key);
 
 	/**
+	 * 删除set的值
+	 * 
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	public long srem(String key, Object member);
+	
+	/**
 	 * 删除多个set的值
 	 * 
 	 * @param key
 	 * @param members
 	 * @return
 	 */
-	public long srem(String key, Object... members);
+	public long srem(String key, Object[] members);
+	
+	/**
+	 * 删除多个set的值
+	 * 
+	 * @param key
+	 * @param members
+	 * @return
+	 */
+	public long srem(String key, Collection<?> members);
 
 	/**
 	 * 检测值是否在set中

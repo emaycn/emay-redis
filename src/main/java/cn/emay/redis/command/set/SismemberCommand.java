@@ -57,7 +57,7 @@ public class SismemberCommand implements RedisCommand<Boolean> {
 			} else if (String.class.isAssignableFrom(member.getClass())) {
 				isHas = command.sismember(key, (String) member);
 			} else {
-				String value = JsonHelper.toJsonString(member, datePattern);
+				String value = JsonHelper.toJsonStringWithoutNull(member, datePattern);
 				if (value != null) {
 					isHas = command.sismember(key, value);
 				}

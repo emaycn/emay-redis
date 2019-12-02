@@ -171,7 +171,7 @@ public class TestRedis {
 		TestBean value3 = new TestBean(key);
 		TestBean value33 = new TestBean(key + 1);
 
-		redis.sadd(key, -1, value1, value11);
+		redis.sadd(key, -1, Arrays.asList(value1, value11));
 		printIsRight("sadd " + key + " 0,1,1,0 1,1,1,1", true);
 		long length = redis.scard(key);
 		printIsRight("scard " + key, length == 2);
@@ -197,12 +197,12 @@ public class TestRedis {
 		printIsRight("spop " + key, Arrays.equals(bbb, value1) || Arrays.equals(bbb, value11));
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 1);
-		redis.srem(key, value1, value11);
+		redis.srem(key,  Arrays.asList(value1, value11));
 		printIsRight("srem " + key, true);
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 0);
 
-		redis.sadd(key, -1, value2, value22);
+		redis.sadd(key, -1,  Arrays.asList(value2, value22));
 		printIsRight("sadd " + key + " " + value2 + " " + value22, true);
 		String s1 = redis.spop(key);
 		printIsRight("spop " + key, s1.equals(value22) || s1.equals(value2));
@@ -211,7 +211,7 @@ public class TestRedis {
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 0);
 
-		redis.sadd(key, -1, value3, value33);
+		redis.sadd(key, -1,  Arrays.asList(value3, value33));
 		printIsRight("sadd " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33), true);
 		TestBean t1 = redis.spop(key, TestBean.class);
 		printIsRight("spop " + key, t1.getKey().equals(value33.getKey()) || t1.getKey().equals(value3.getKey()));
@@ -235,7 +235,7 @@ public class TestRedis {
 		TestBean value3 = new TestBean(key);
 		TestBean value33 = new TestBean(key + 1);
 
-		long length = redis.lpush(key, -1, value1, value11);
+		long length = redis.lpush(key, -1, Arrays.asList(value1,value11));
 		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1", length == 2);
 		long length1 = redis.llen(key);
 		printIsRight("llen " + key, length1 == 2);
@@ -248,7 +248,7 @@ public class TestRedis {
 		long length3 = redis.llen(key);
 		printIsRight("llen " + key, length3 == 0);
 
-		redis.lpush(key, -1, value2, value22);
+		redis.lpush(key, -1, new Object[]{value2,value22} );
 		printIsRight("lpush " + key + " " + value2 + " " + value22, true);
 		String s1 = redis.lpop(key);
 		printIsRight("lpop " + key, s1.equals(value22));
@@ -257,7 +257,7 @@ public class TestRedis {
 		long length4 = redis.llen(key);
 		printIsRight("llen " + key, length4 == 0);
 
-		redis.rpush(key, -1, value3, value33);
+		redis.rpush(key, -1, Arrays.asList(value3, value33));
 		printIsRight("rpush " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33), true);
 		TestBean t1 = redis.rpop(key, TestBean.class);
 		printIsRight("rpop " + key, JsonHelper.toJsonString(t1).equals(JsonHelper.toJsonString(value33)));
@@ -266,7 +266,8 @@ public class TestRedis {
 		long length5 = redis.llen(key);
 		printIsRight("llen " + key, length5 == 0);
 
-		redis.lpush(key, -1, value1, value11);
+		redis.lpush(key, -1, value1);
+		redis.lpush(key, -1, value11);
 		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1", length == 2);
 		List<byte[]> b11 = redis.lrange(key, 0, 0, byte[].class);
 		printIsRight("lrange " + key, b11.size() == 1 && Arrays.equals(b11.get(0), value11));
@@ -274,13 +275,14 @@ public class TestRedis {
 		printIsRight("lrange " + key, b22.size() == 1 && Arrays.equals(b22.get(0), value1));
 		redis.del(key);
 
-		redis.lpush(key, -1, value2, value22);
+		redis.lpush(key, -1, value2);
+		redis.lpush(key, -1, value22);
 		printIsRight("lpush " + key + " " + value2 + " " + value22, true);
 		List<String> li = redis.lrange(key, 0, -1);
 		printIsRight("lrange " + key, li.size() == 2 && li.get(0).equals(value22) && li.get(1).equals(value2));
 		redis.del(key);
 
-		redis.rpush(key, -1, value3, value33);
+		redis.rpush(key, -1, Arrays.asList(value3, value33));
 		printIsRight("rpush " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33), true);
 		List<TestBean> lc = redis.lrange(key, 0, -1, TestBean.class);
 		printIsRight("lrange " + key,

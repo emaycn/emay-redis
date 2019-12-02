@@ -64,7 +64,7 @@ public class SetnxCommand implements RedisCommand<Boolean> {
 		} else if (String.class.isAssignableFrom(value.getClass())) {
 			number = command.setnx(key, (String) value);
 		} else {
-			number = command.setnx(key, JsonHelper.toJsonString(value, datePattern));
+			number = command.setnx(key, JsonHelper.toJsonStringWithoutNull(value, datePattern));
 		}
 		if (number != 0) {
 			if (expireTime > 0) {

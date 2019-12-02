@@ -65,7 +65,7 @@ public class SaddCommand implements RedisCommand<Long> {
 				} else if (String.class.isAssignableFrom(obj.getClass())) {
 					strvalues.add((String) obj);
 				} else {
-					String value = JsonHelper.toJsonString(obj, datePattern);
+					String value = JsonHelper.toJsonStringWithoutNull(obj, datePattern);
 					if (value != null) {
 						strvalues.add(value);
 					}

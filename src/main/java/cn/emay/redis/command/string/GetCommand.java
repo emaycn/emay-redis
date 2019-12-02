@@ -51,9 +51,9 @@ public class GetCommand<K> implements RedisCommand<K> {
 			if (byte[].class.isAssignableFrom(clazz)) {
 				byte[] value = null;
 				if (bjcommand != null) {
-					bjcommand.get(key.getBytes("UTF-8"));
+					value = bjcommand.get(key.getBytes("UTF-8"));
 				} else if (bjccommand != null) {
-					bjccommand.get(key.getBytes("UTF-8"));
+					value = bjccommand.get(key.getBytes("UTF-8"));
 				}
 				return (K) value;
 			} else if (String.class.isAssignableFrom(clazz)) {

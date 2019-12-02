@@ -64,7 +64,7 @@ public class HsetCommand implements RedisCommand<Boolean> {
 			} else if (String.class.isAssignableFrom(value.getClass())) {
 				execResult = command.hset(key, fieldname, (String) value);
 			} else {
-				execResult = command.hset(key, fieldname, JsonHelper.toJsonString(value, datePattern));
+				execResult = command.hset(key, fieldname, JsonHelper.toJsonStringWithoutNull(value, datePattern));
 			}
 			if (expireTime > 0) {
 				expireResult = command.expire(key, expireTime);

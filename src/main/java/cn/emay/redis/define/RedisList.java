@@ -1,5 +1,6 @@
 package cn.emay.redis.define;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,26 +17,66 @@ public interface RedisList {
 	 * @return
 	 */
 	public long llen(String key);
+	
+	/**
+	 * 往list左侧批量放数据
+	 * 
+	 * @param key
+	 * @param objects
+	 * @param expireTime
+	 * @return 队列长度
+	 */
+	public long lpush(String key, int expireTime, Collection<?> objects);
 
+	/**
+	 * 往list左侧批量放数据
+	 * 
+	 * @param key
+	 * @param objects
+	 * @param expireTime
+	 * @return 队列长度
+	 */
+	public long lpush(String key, int expireTime, Object[] objects);
+	
 	/**
 	 * 往list左侧放数据
 	 * 
 	 * @param key
-	 * @param objects
+	 * @param object
 	 * @param expireTime
 	 * @return 队列长度
 	 */
-	public long lpush(String key, int expireTime, Object... objects);
-
+	public long lpush(String key, int expireTime, Object object);
+	
 	/**
-	 * 往list右侧放数据
+	 * 往list右侧批量放数据
 	 * 
 	 * @param key
 	 * @param objects
 	 * @param expireTime
 	 * @return 队列长度
 	 */
-	public long rpush(String key, int expireTime, Object... objects);
+	public long rpush(String key, int expireTime, Collection<?> objects);
+
+	/**
+	 * 往list右侧批量放数据
+	 * 
+	 * @param key
+	 * @param objects
+	 * @param expireTime
+	 * @return 队列长度
+	 */
+	public long rpush(String key, int expireTime, Object[] objects);
+	
+	/**
+	 * 往list右侧放数据
+	 * 
+	 * @param key
+	 * @param object
+	 * @param expireTime
+	 * @return 队列长度
+	 */
+	public long rpush(String key, int expireTime, Object object);
 
 	/**
 	 * 从list左侧拿数据，并转换为特定class,无阻塞

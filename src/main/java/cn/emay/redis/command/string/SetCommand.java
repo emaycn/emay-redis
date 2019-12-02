@@ -77,9 +77,9 @@ public class SetCommand implements RedisCommand<Boolean> {
 			}
 		} else {
 			if (expireTime > 0) {
-				setResult = command.setex(key, expireTime, JsonHelper.toJsonString(value, datePattern));
+				setResult = command.setex(key, expireTime, JsonHelper.toJsonStringWithoutNull(value, datePattern));
 			} else {
-				setResult = command.set(key, JsonHelper.toJsonString(value, datePattern));
+				setResult = command.set(key, JsonHelper.toJsonStringWithoutNull(value, datePattern));
 			}
 		}
 		return "OK".equalsIgnoreCase(setResult);

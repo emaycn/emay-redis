@@ -64,7 +64,7 @@ public class HmsetCommand implements RedisCommand<Boolean> {
 				} else if (String.class.isAssignableFrom(entry.getValue().getClass())) {
 					stringmap.put(entry.getKey(), (String) entry.getValue());
 				} else {
-					stringmap.put(entry.getKey(), JsonHelper.toJsonString(entry.getValue(), datePattern));
+					stringmap.put(entry.getKey(), JsonHelper.toJsonStringWithoutNull(entry.getValue(), datePattern));
 				}
 			}
 			if (!bytemap.isEmpty()) {

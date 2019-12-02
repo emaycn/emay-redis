@@ -1,5 +1,6 @@
 package cn.emay.redis.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -244,13 +245,33 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 	}
 
 	@Override
-	public long lpush(String key, int expireTime, Object... objects) {
+	public long lpush(String key, int expireTime, Collection<?> objects) {
+		return this.execCommand(new LpushCommand(key, expireTime, getDatePattern(), objects.toArray()));
+	}
+	
+	@Override
+	public long lpush(String key, int expireTime, Object[] objects) {
 		return this.execCommand(new LpushCommand(key, expireTime, getDatePattern(), objects));
 	}
-
+	
 	@Override
-	public long rpush(String key, int expireTime, Object... objects) {
+	public long lpush(String key, int expireTime, Object object) {
+		return this.execCommand(new LpushCommand(key, expireTime, getDatePattern(), object));
+	}
+	
+	@Override
+	public long rpush(String key, int expireTime, Collection<?> objects) {
+		return this.execCommand(new RpushCommand(key, expireTime, getDatePattern(), objects.toArray()));
+	}
+	
+	@Override
+	public long rpush(String key, int expireTime, Object[] objects) {
 		return this.execCommand(new RpushCommand(key, expireTime, getDatePattern(), objects));
+	}
+	
+	@Override
+	public long rpush(String key, int expireTime, Object object) {
+		return this.execCommand(new RpushCommand(key, expireTime, getDatePattern(), object));
 	}
 
 	@Override
@@ -291,8 +312,18 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 	}
 
 	@Override
-	public long sadd(String key, int expireTime, Object... values) {
+	public long sadd(String key, int expireTime, Object value) {
+		return this.execCommand(new SaddCommand(key, expireTime, getDatePattern(), value));
+	}
+	
+	@Override
+	public long sadd(String key, int expireTime, Object[] values) {
 		return this.execCommand(new SaddCommand(key, expireTime, getDatePattern(), values));
+	}
+	
+	@Override
+	public long sadd(String key, int expireTime, Collection<?> values) {
+		return this.execCommand(new SaddCommand(key, expireTime, getDatePattern(), values.toArray()));
 	}
 
 	@Override
@@ -338,8 +369,18 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 	}
 
 	@Override
-	public long srem(String key, Object... members) {
+	public long srem(String key, Object[] members) {
 		return this.execCommand(new SremCommand(key, getDatePattern(), members));
+	}
+	
+	@Override
+	public long srem(String key, Object member) {
+		return this.execCommand(new SremCommand(key, getDatePattern(), member));
+	}
+	
+	@Override
+	public long srem(String key, Collection<?> members) {
+		return this.execCommand(new SremCommand(key, getDatePattern(), members.toArray()));
 	}
 
 	@Override
