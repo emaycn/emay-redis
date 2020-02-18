@@ -38,20 +38,13 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
-	 * @param timeout
-	 *            超时时间
-	 * @param maxRedirections
-	 *            最大寻址次数
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
+	 * @param hosts           集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param timeout         超时时间
+	 * @param maxRedirections 最大寻址次数
+	 * @param maxIdle         最大空闲线程数
+	 * @param maxTotal        最大线程数
+	 * @param minIdle         最小空闲线程数
+	 * @param maxWaitMillis   最大等待时间
 	 */
 	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
 		this(hosts, timeoutMillis, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
@@ -60,26 +53,40 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
-	 * @param timeout
-	 *            超时时间
-	 * @param maxRedirections
-	 *            最大寻址次数
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
-	 * @param datePattern
-	 *            Json转换日期格式
+	 * @param hosts           集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param timeout         超时时间
+	 * @param maxRedirections 最大寻址次数
+	 * @param maxIdle         最大空闲线程数
+	 * @param maxTotal        最大线程数
+	 * @param minIdle         最小空闲线程数
+	 * @param maxWaitMillis   最大等待时间
+	 * @param datePattern     Json转换日期格式
 	 */
-	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis,
+			String datePattern) {
+		this(hosts, timeoutMillis, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, null, null);
+	}
+
+	/**
+	 * 实例化并初始化
+	 * 
+	 * @param hosts           集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param timeout         超时时间
+	 * @param maxRedirections 最大寻址次数
+	 * @param maxIdle         最大空闲线程数
+	 * @param maxTotal        最大线程数
+	 * @param minIdle         最小空闲线程数
+	 * @param maxWaitMillis   最大等待时间
+	 * @param datePattern     Json转换日期格式
+	 * @param password        密码(非必填)
+	 */
+	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis,
+			String datePattern, String password) {
 		properties = new Properties();
 		properties.setProperty("hosts", hosts);
+		if (password != null) {
+			properties.setProperty("password", password);
+		}
 		properties.setProperty("maxRedirections", String.valueOf(maxRedirections));
 		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
@@ -111,6 +118,12 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 		poolConfig.setMaxTotal(Integer.valueOf(properties.getProperty("maxTotal")));
 		poolConfig.setMaxWaitMillis(Long.valueOf(properties.getProperty("maxWaitMillis")));
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
+		
+		poolConfig.setTestWhileIdle(true);
+		poolConfig.setMinEvictableIdleTimeMillis(60000);
+		poolConfig.setTimeBetweenEvictionRunsMillis(30000);
+		poolConfig.setNumTestsPerEvictionRun(-1);
+		
 		Set<HostAndPort> set = new HashSet<HostAndPort>();
 		String[] hostses = hosts.split(",");
 		for (String hostitem : hostses) {
@@ -134,13 +147,12 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 				set.add(new HostAndPort(ip, port));
 			}
 		}
-		jedisCluster = new JedisCluster(set, timeout, maxRedirections, poolConfig);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				RedisClusterClient.this.close();
-			}
-		});
+		String password = properties.getProperty("password");
+		if (password != null && !password.trim().equals("")) {
+			jedisCluster = new JedisCluster(set, timeout, timeout, maxRedirections, password, poolConfig);
+		} else {
+			jedisCluster = new JedisCluster(set, timeout, maxRedirections, poolConfig);
+		}
 	}
 
 	@Override

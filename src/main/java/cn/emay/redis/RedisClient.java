@@ -1,5 +1,7 @@
 package cn.emay.redis;
 
+import java.io.Closeable;
+
 import cn.emay.redis.command.RedisCommand;
 import cn.emay.redis.define.RedisCommon;
 import cn.emay.redis.define.RedisHash;
@@ -14,7 +16,7 @@ import cn.emay.redis.define.RedisString;
  * @author Frank
  *
  */
-public interface RedisClient extends RedisCommon, RedisString, RedisHash, RedisList, RedisSet, RedisSortedSet {
+public interface RedisClient extends Closeable,RedisCommon, RedisString, RedisHash, RedisList, RedisSet, RedisSortedSet {
 
 	/**
 	 * 执行

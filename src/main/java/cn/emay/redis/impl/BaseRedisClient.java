@@ -78,11 +78,6 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 	public abstract void init();
 
 	/**
-	 * 关闭客户端
-	 */
-	public abstract void close();
-
-	/**
 	 * 获取客户端
 	 * 
 	 * @return

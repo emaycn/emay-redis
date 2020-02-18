@@ -34,20 +34,13 @@ public class RedisSingleClient extends BaseRedisClient<JedisPool> implements Red
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param host
-	 *            redis地址
-	 * @param port
-	 *            redis端口
-	 * @param timeout
-	 *            超时时间
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
+	 * @param host          redis地址
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
 	 */
 	public RedisSingleClient(String host, int port, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
 		this(host, port, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
@@ -56,26 +49,39 @@ public class RedisSingleClient extends BaseRedisClient<JedisPool> implements Red
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param host
-	 *            redis地址
-	 * @param port
-	 *            redis端口
-	 * @param timeout
-	 *            超时时间
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
-	 * @param datePattern
-	 *            Json转换日期格式
+	 * @param host          redis地址
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
+	 * @param datePattern   Json转换日期格式
 	 */
 	public RedisSingleClient(String host, int port, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+		this(host, port, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null, null);
+	}
+
+	/**
+	 * 实例化并初始化
+	 * 
+	 * @param host          redis地址
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
+	 * @param datePattern   Json转换日期格式
+	 * @param password      密码(非必填)
+	 */
+	public RedisSingleClient(String host, int port, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern,
+			String password) {
 		properties = new Properties();
 		properties.setProperty("host", host);
+		if (password != null) {
+			properties.setProperty("password", password);
+		}
 		properties.setProperty("port", String.valueOf(port));
 		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
@@ -107,13 +113,18 @@ public class RedisSingleClient extends BaseRedisClient<JedisPool> implements Red
 		poolConfig.setMaxTotal(Integer.valueOf(properties.getProperty("maxTotal")));
 		poolConfig.setMaxWaitMillis(Long.valueOf(properties.getProperty("maxWaitMillis")));
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
-		jedisPool = new JedisPool(poolConfig, host, port, timeout);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				RedisSingleClient.this.close();
-			}
-		});
+		
+		poolConfig.setTestWhileIdle(true);
+		poolConfig.setMinEvictableIdleTimeMillis(60000);
+		poolConfig.setTimeBetweenEvictionRunsMillis(30000);
+		poolConfig.setNumTestsPerEvictionRun(-1);
+		
+		String password = properties.getProperty("password");
+		if (password != null && !password.trim().equals("")) {
+			jedisPool = new JedisPool(poolConfig, host, port, timeout, password);
+		} else {
+			jedisPool = new JedisPool(poolConfig, host, port, timeout);
+		}
 	}
 
 	@Override

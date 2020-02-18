@@ -37,20 +37,13 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
-	 * @param port
-	 *            redis端口
-	 * @param timeout
-	 *            超时时间
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
+	 * @param hosts         集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
 	 */
 	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis) {
 		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null);
@@ -59,26 +52,39 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 	/**
 	 * 实例化并初始化
 	 * 
-	 * @param hosts
-	 *            集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
-	 * @param port
-	 *            redis端口
-	 * @param timeout
-	 *            超时时间
-	 * @param maxIdle
-	 *            最大空闲线程数
-	 * @param maxTotal
-	 *            最大线程数
-	 * @param minIdle
-	 *            最小空闲线程数
-	 * @param maxWaitMillis
-	 *            最大等待时间
-	 * @param datePattern
-	 *            Json转换日期格式
+	 * @param hosts         集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
+	 * @param datePattern   Json转换日期格式
 	 */
 	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
+		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null, null);
+	}
+
+	/**
+	 * 实例化并初始化
+	 * 
+	 * @param hosts         集群节点地址，ip:port,ip:port 或ip:port;ip:port。 支持逗号以分号分隔符
+	 * @param port          redis端口
+	 * @param timeout       超时时间
+	 * @param maxIdle       最大空闲线程数
+	 * @param maxTotal      最大线程数
+	 * @param minIdle       最小空闲线程数
+	 * @param maxWaitMillis 最大等待时间
+	 * @param datePattern   Json转换日期格式
+	 * @param password      密码(非必填)
+	 */
+	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern,
+			String password) {
 		properties = new Properties();
 		properties.setProperty("hosts", hosts);
+		if (password != null) {
+			properties.setProperty("password", password);
+		}
 		properties.setProperty("timeout", String.valueOf(timeoutMillis));
 		properties.setProperty("maxIdle", String.valueOf(maxIdle));
 		properties.setProperty("maxTotal", String.valueOf(maxTotal));
@@ -106,6 +112,13 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 		poolConfig.setMaxTotal(Integer.valueOf(properties.getProperty("maxTotal")));
 		poolConfig.setMaxWaitMillis(Long.valueOf(properties.getProperty("maxWaitMillis")));
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
+		
+		poolConfig.setTestWhileIdle(true);
+		poolConfig.setMinEvictableIdleTimeMillis(60000);
+		poolConfig.setTimeBetweenEvictionRunsMillis(30000);
+		poolConfig.setNumTestsPerEvictionRun(-1);
+		
+		String password = properties.getProperty("password");
 		String hosts = properties.getProperty("hosts");
 		int timeout = Integer.valueOf(properties.getProperty("timeout"));
 		List<JedisShardInfo> infoList = new ArrayList<>();
@@ -129,16 +142,13 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 					throw new RuntimeException(" port  is must number ! ");
 				}
 				JedisShardInfo shardInfo = new JedisShardInfo(ip, port, timeout);
+				if (password != null && !password.trim().equals("")) {
+					shardInfo.setPassword(password);
+				}
 				infoList.add(shardInfo);
 			}
 		}
 		jedisPool = new ShardedJedisPool(poolConfig, infoList);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				RedisShardedClient.this.close();
-			}
-		});
 	}
 
 	@Override
