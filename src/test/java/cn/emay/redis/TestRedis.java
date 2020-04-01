@@ -1,5 +1,6 @@
 package cn.emay.redis;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -7,13 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.emay.json.JsonHelper;
-import cn.emay.redis.RedisClient;
+import cn.emay.redis.command.PipelineCommand;
 import cn.emay.redis.command.RedisCommand;
 import cn.emay.redis.impl.RedisClusterClient;
+import cn.emay.redis.impl.RedisSentinelClient;
 import cn.emay.redis.impl.RedisShardedClient;
 import cn.emay.redis.impl.RedisSingleClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.PipelineBase;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.Tuple;
 
@@ -27,10 +30,11 @@ public class TestRedis {
 
 	static RedisClient redis;
 
-	public static void main(String[] args) throws InterruptedException {
-		redis = redisSingleClient();
-		// redis = RedisClusterClient();
-		// redis = RedisShardedClient();
+	public static void main(String[] args) throws InterruptedException, IOException {
+		 redis = redisSingleClient();
+//		 redis = redisClusterClient();
+//		 redis = redisShardedClient();
+//		redis = redisSentinelClient();
 		testBase();
 		testCommon();
 		testHash();
@@ -38,6 +42,46 @@ public class TestRedis {
 		testList();
 		testSet();
 		testSortedSet();
+		
+//		testPipeline();
+
+		redis.close();
+	}
+
+	protected static void testPipeline() {
+
+		final String key = "QUEUE_TEST";
+		
+		
+		List<Object> list = redis.execPipelineCommand(new PipelineCommand() {
+
+			@Override
+			public void commond(PipelineBase pipeline) {
+				for (int i = 0; i < 10; i++) {
+					pipeline.lpush(key, "" + i);
+				}
+			}
+		});
+		
+		list.forEach(o -> {
+			System.out.println("push:" + o);
+		});
+		
+
+		list = redis.execPipelineCommand(new PipelineCommand() {
+
+			@Override
+			public void commond(PipelineBase pipeline) {
+				for (int i = 0; i < 10; i++) {
+					pipeline.rpop(key);
+				}
+			}
+		});
+		
+		list.forEach(o -> {
+			System.out.println("pop:" + o);
+		});
+		
 	}
 
 	protected static void testSortedSet() {
@@ -197,12 +241,12 @@ public class TestRedis {
 		printIsRight("spop " + key, Arrays.equals(bbb, value1) || Arrays.equals(bbb, value11));
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 1);
-		redis.srem(key,  Arrays.asList(value1, value11));
+		redis.srem(key, Arrays.asList(value1, value11));
 		printIsRight("srem " + key, true);
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 0);
 
-		redis.sadd(key, -1,  Arrays.asList(value2, value22));
+		redis.sadd(key, -1, Arrays.asList(value2, value22));
 		printIsRight("sadd " + key + " " + value2 + " " + value22, true);
 		String s1 = redis.spop(key);
 		printIsRight("spop " + key, s1.equals(value22) || s1.equals(value2));
@@ -211,7 +255,7 @@ public class TestRedis {
 		length = redis.scard(key);
 		printIsRight("scard " + key, length == 0);
 
-		redis.sadd(key, -1,  Arrays.asList(value3, value33));
+		redis.sadd(key, -1, Arrays.asList(value3, value33));
 		printIsRight("sadd " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33), true);
 		TestBean t1 = redis.spop(key, TestBean.class);
 		printIsRight("spop " + key, t1.getKey().equals(value33.getKey()) || t1.getKey().equals(value3.getKey()));
@@ -235,7 +279,7 @@ public class TestRedis {
 		TestBean value3 = new TestBean(key);
 		TestBean value33 = new TestBean(key + 1);
 
-		long length = redis.lpush(key, -1, Arrays.asList(value1,value11));
+		long length = redis.lpush(key, -1, Arrays.asList(value1, value11));
 		printIsRight("lpush " + key + " 0,1,1,0 1,1,1,1", length == 2);
 		long length1 = redis.llen(key);
 		printIsRight("llen " + key, length1 == 2);
@@ -248,7 +292,7 @@ public class TestRedis {
 		long length3 = redis.llen(key);
 		printIsRight("llen " + key, length3 == 0);
 
-		redis.lpush(key, -1, new Object[]{value2,value22} );
+		redis.lpush(key, -1, new Object[] { value2, value22 });
 		printIsRight("lpush " + key + " " + value2 + " " + value22, true);
 		String s1 = redis.lpop(key);
 		printIsRight("lpop " + key, s1.equals(value22));
@@ -285,8 +329,8 @@ public class TestRedis {
 		redis.rpush(key, -1, Arrays.asList(value3, value33));
 		printIsRight("rpush " + key + " " + JsonHelper.toJsonString(value3) + " " + JsonHelper.toJsonString(value33), true);
 		List<TestBean> lc = redis.lrange(key, 0, -1, TestBean.class);
-		printIsRight("lrange " + key,
-				lc.size() == 2 && JsonHelper.toJsonString(lc.get(0)).equals(JsonHelper.toJsonString(value3)) && JsonHelper.toJsonString(lc.get(1)).equals(JsonHelper.toJsonString(value33)));
+		printIsRight("lrange " + key, lc.size() == 2 && JsonHelper.toJsonString(lc.get(0)).equals(JsonHelper.toJsonString(value3))
+				&& JsonHelper.toJsonString(lc.get(1)).equals(JsonHelper.toJsonString(value33)));
 		redis.del(key);
 
 		printIsRight("**List测试**", true);
@@ -627,15 +671,20 @@ public class TestRedis {
 	}
 
 	protected static RedisClusterClient redisClusterClient() {
-		return new RedisClusterClient("100.100.10.90:16179,100.100.10.90:16279,100.100.10.90:16379,100.100.10.93:16479,100.100.10.93:16579,100.100.10.93:16679", 2000, 6, 4, 8, 1, 2000);
+		return new RedisClusterClient("100.100.10.90:16179,100.100.10.90:16279,100.100.10.90:16379,100.100.10.93:16479,100.100.10.93:16579,100.100.10.93:16679",
+				2000, 6, 4, 8, 1, 2000);
 	}
 
 	protected static RedisShardedClient redisShardedClient() {
-		return new RedisShardedClient("127.0.0.1:6379;100.100.10.92:6379", 2000, 4, 8, 1, 2000);
+		return new RedisShardedClient("100.100.10.95:6379;100.100.10.84:6400", 2000, 4, 8, 1, 2000);
 	}
 
 	protected static RedisSingleClient redisSingleClient() {
-		return new RedisSingleClient("127.0.0.1", 6379, 2000, 4, 8, 1, 2000);
+		return new RedisSingleClient("100.100.10.84", 6400, 2000, 4, 8, 1, 2000);
+	}
+
+	protected static RedisSentinelClient redisSentinelClient() {
+		return new RedisSentinelClient("mymaster", "100.100.10.96:17379;100.100.10.96:18379;100.100.10.96:19379", 2000, 4, 8, 1, 2000);
 	}
 
 }

@@ -2,12 +2,14 @@ package cn.emay.redis.impl;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import cn.emay.redis.RedisClient;
+import cn.emay.redis.command.PipelineCommand;
 import cn.emay.redis.command.RedisCommand;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
@@ -64,7 +66,7 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 	 */
 	public RedisClusterClient(String hosts, int timeoutMillis, int maxRedirections, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis,
 			String datePattern) {
-		this(hosts, timeoutMillis, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, null, null);
+		this(hosts, timeoutMillis, maxRedirections, maxIdle, maxTotal, minIdle, maxWaitMillis, datePattern, null);
 	}
 
 	/**
@@ -193,5 +195,12 @@ public class RedisClusterClient extends BaseRedisClient<JedisCluster> implements
 	public String getDatePattern() {
 		return datePattern;
 	}
+
+	@Override
+	@Deprecated
+	public List<Object> execPipelineCommand(PipelineCommand pipelineCommand) {
+		return null;
+	}
+
 
 }

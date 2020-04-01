@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Properties;
 
 import cn.emay.redis.RedisClient;
+import cn.emay.redis.command.PipelineCommand;
 import cn.emay.redis.command.RedisCommand;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.ShardedJedisPool;
 
 /**
@@ -62,7 +64,7 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 	 * @param datePattern   Json转换日期格式
 	 */
 	public RedisShardedClient(String hosts, int timeoutMillis, int maxIdle, int maxTotal, int minIdle, long maxWaitMillis, String datePattern) {
-		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, null, null);
+		this(hosts, timeoutMillis, maxIdle, maxTotal, minIdle, maxWaitMillis, datePattern, null);
 	}
 
 	/**
@@ -112,12 +114,12 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 		poolConfig.setMaxTotal(Integer.valueOf(properties.getProperty("maxTotal")));
 		poolConfig.setMaxWaitMillis(Long.valueOf(properties.getProperty("maxWaitMillis")));
 		poolConfig.setMinIdle(Integer.valueOf(properties.getProperty("minIdle")));
-		
+
 		poolConfig.setTestWhileIdle(true);
 		poolConfig.setMinEvictableIdleTimeMillis(60000);
 		poolConfig.setTimeBetweenEvictionRunsMillis(30000);
 		poolConfig.setNumTestsPerEvictionRun(-1);
-		
+
 		String password = properties.getProperty("password");
 		String hosts = properties.getProperty("hosts");
 		int timeout = Integer.valueOf(properties.getProperty("timeout"));
@@ -190,6 +192,24 @@ public class RedisShardedClient extends BaseRedisClient<ShardedJedisPool> implem
 	@Override
 	public String getDatePattern() {
 		return datePattern;
+	}
+
+	@Override
+	public List<Object> execPipelineCommand(PipelineCommand pipelineCommand) {
+		ShardedJedis jedis = null;
+		ShardedJedisPipeline pipeline = null;
+		try {
+			jedis = getClient().getResource();
+			pipeline = jedis.pipelined();
+			pipelineCommand.commond(pipeline);
+			return pipelineCommand.getResult(pipeline);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
 	}
 
 }
