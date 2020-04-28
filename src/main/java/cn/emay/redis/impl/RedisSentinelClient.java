@@ -96,6 +96,13 @@ public class RedisSentinelClient extends BaseRedisClient<JedisSentinelPool> impl
 		properties.setProperty("datePattern", datePattern == null ? "yyyy-MM-dd HH:mm:ss" : datePattern);
 		this.init();
 	}
+	
+	/**
+	 * 实例化并不初始化，需要setproperties()并调用init()主动初始化
+	 */
+	public RedisSentinelClient() {
+
+	}
 
 	@Override
 	public void init() {
