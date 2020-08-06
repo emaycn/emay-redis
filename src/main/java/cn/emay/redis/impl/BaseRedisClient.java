@@ -37,22 +37,7 @@ import cn.emay.redis.command.set.SmembersCommand;
 import cn.emay.redis.command.set.SpopCommand;
 import cn.emay.redis.command.set.SrandmemberCommand;
 import cn.emay.redis.command.set.SremCommand;
-import cn.emay.redis.command.sortedset.ZaddCommand;
-import cn.emay.redis.command.sortedset.ZaddCommandAll;
-import cn.emay.redis.command.sortedset.ZcardCommand;
-import cn.emay.redis.command.sortedset.ZcountCommand;
-import cn.emay.redis.command.sortedset.ZrangeByScoreCommand;
-import cn.emay.redis.command.sortedset.ZrangeByScoreWithOffsetCommand;
-import cn.emay.redis.command.sortedset.ZrangeCommand;
-import cn.emay.redis.command.sortedset.ZrankCommand;
-import cn.emay.redis.command.sortedset.ZremCommand;
-import cn.emay.redis.command.sortedset.ZremerangeByRankCommand;
-import cn.emay.redis.command.sortedset.ZremerangeByScoreCommand;
-import cn.emay.redis.command.sortedset.ZrevrangeByScoreCommand;
-import cn.emay.redis.command.sortedset.ZrevrangeByScoreWithOffsetCommand;
-import cn.emay.redis.command.sortedset.ZrevrangeCommand;
-import cn.emay.redis.command.sortedset.ZrevrankCommand;
-import cn.emay.redis.command.sortedset.ZscoreCommand;
+import cn.emay.redis.command.sortedset.*;
 import cn.emay.redis.command.string.DecrByCommand;
 import cn.emay.redis.command.string.DecrCommand;
 import cn.emay.redis.command.string.GetCommand;
@@ -393,6 +378,11 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 	@Override
 	public long zaddAll(String key, Map<String, Double> scoreMembers) {
 		return this.execCommand(new ZaddCommandAll(key, scoreMembers));
+	}
+
+	@Override
+	public double zincrby(String key, double increment, String member){
+		return this.execCommand(new ZincrbyCommand(key, increment,member));
 	}
 
 	@Override

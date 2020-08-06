@@ -199,6 +199,12 @@ public class TestRedis {
 		length = redis.zcard(key);
 		printIsRight("zcard " + key, length == 0);
 
+		double in = redis.zincrby(key,10,"hell");
+		printIsRight("zincrby " + key, in == 10);
+		in = redis.zincrby(key,-1,"hell");
+		printIsRight("zincrby " + key, in == 9);
+
+
 		printIsRight("**SortedSet测试**", true);
 		redis.del(key);
 

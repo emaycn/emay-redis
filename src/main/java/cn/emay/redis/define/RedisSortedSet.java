@@ -23,6 +23,16 @@ public interface RedisSortedSet {
 	public boolean zadd(String key, double score, String member);
 
 	/**
+	 * 成员评分+increment
+	 *
+	 * @param key
+	 * @param increment
+	 * @param member
+	 * @return
+	 */
+	public double zincrby(String key, double increment, String member);
+
+	/**
 	 * 放入键、成员、评分
 	 * 
 	 * @param key
