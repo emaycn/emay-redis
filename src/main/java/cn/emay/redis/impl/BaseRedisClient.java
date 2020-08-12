@@ -453,7 +453,7 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 
 	@Override
 	public Set<String> zrevrangeByScore(String key, double min, double max) {
-		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max);
+		Set<Tuple> ts = this.zrevrangeByScoreWithScores(key, min, max);
 		if (ts == null || ts.isEmpty()) {
 			return null;
 		}
@@ -471,7 +471,7 @@ public abstract class BaseRedisClient<C> implements RedisClient {
 
 	@Override
 	public Set<String> zrevrangeByScore(String key, double min, double max, int offset, int count) {
-		Set<Tuple> ts = this.zrangeByScoreWithScores(key, min, max, offset, count);
+		Set<Tuple> ts = this.zrevrangeByScoreWithScores(key, min, max, offset, count);
 		if (ts == null || ts.isEmpty()) {
 			return null;
 		}
