@@ -7,41 +7,39 @@ import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.ShardedJedis;
 
 /**
- * 
  * @author Frank
- *
  */
 public class HincrByCommand implements RedisCommand<Long> {
 
-	private String key;
+    private final String key;
 
-	private long number;
+    private final long number;
 
-	private String fieldname;
+    private final String fieldname;
 
-	public HincrByCommand(String key, String fieldname, long number) {
-		this.key = key;
-		this.number = number;
-		this.fieldname = fieldname;
-	}
+    public HincrByCommand(String key, String fieldname, long number) {
+        this.key = key;
+        this.number = number;
+        this.fieldname = fieldname;
+    }
 
-	@Override
-	public Long commond(Jedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Long commond(Jedis client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Long commond(JedisCluster client) {
-		return this.exec(client);
-	}
+    @Override
+    public Long commond(JedisCluster client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Long commond(ShardedJedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Long commond(ShardedJedis client) {
+        return this.exec(client);
+    }
 
-	private Long exec(JedisCommands command) {
-		return command.hincrBy(key, fieldname, number);
-	}
+    private Long exec(JedisCommands command) {
+        return command.hincrBy(key, fieldname, number);
+    }
 
 }

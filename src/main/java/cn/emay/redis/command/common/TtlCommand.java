@@ -7,31 +7,30 @@ import redis.clients.jedis.ShardedJedis;
 
 /**
  * 检测剩余超时时间命令
- * 
- * @author Frank
  *
+ * @author Frank
  */
 public class TtlCommand implements RedisCommand<Long> {
 
-	private String key;
+    private final String key;
 
-	public TtlCommand(String key) {
-		this.key = key;
-	}
+    public TtlCommand(String key) {
+        this.key = key;
+    }
 
-	@Override
-	public Long commond(Jedis client) {
-		return client.ttl(key);
-	}
+    @Override
+    public Long commond(Jedis client) {
+        return client.ttl(key);
+    }
 
-	@Override
-	public Long commond(JedisCluster client) {
-		return client.ttl(key);
-	}
+    @Override
+    public Long commond(JedisCluster client) {
+        return client.ttl(key);
+    }
 
-	@Override
-	public Long commond(ShardedJedis client) {
-		return client.ttl(key);
-	}
+    @Override
+    public Long commond(ShardedJedis client) {
+        return client.ttl(key);
+    }
 
 }

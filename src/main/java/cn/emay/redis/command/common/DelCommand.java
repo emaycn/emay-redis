@@ -7,35 +7,34 @@ import redis.clients.jedis.ShardedJedis;
 
 /**
  * 删除命令
- * 
- * @author Frank
  *
+ * @author Frank
  */
 public class DelCommand implements RedisCommand<Long> {
 
-	private String[] keys;
+    private final String[] keys;
 
-	public DelCommand(String... keys) {
-		this.keys = keys;
-	}
+    public DelCommand(String... keys) {
+        this.keys = keys;
+    }
 
-	@Override
-	public Long commond(Jedis client) {
-		return client.del(keys);
-	}
+    @Override
+    public Long commond(Jedis client) {
+        return client.del(keys);
+    }
 
-	@Override
-	public Long commond(JedisCluster client) {
-		return client.del(keys);
-	}
+    @Override
+    public Long commond(JedisCluster client) {
+        return client.del(keys);
+    }
 
-	@Override
-	public Long commond(ShardedJedis client) {
-		Long number = 0L;
-		for (String key : keys) {
-			number += client.del(key);
-		}
-		return number;
-	}
+    @Override
+    public Long commond(ShardedJedis client) {
+        Long number = 0L;
+        for (String key : keys) {
+            number += client.del(key);
+        }
+        return number;
+    }
 
 }

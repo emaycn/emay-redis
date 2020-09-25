@@ -6,35 +6,34 @@ import redis.clients.jedis.ShardedJedis;
 
 /**
  * 执行器
- * 
- * @author Frank
  *
  * @param <T>
+ * @author Frank
  */
 public interface RedisCommand<T> {
 
-	/**
-	 * 单点redis执行方法
-	 * 
-	 * @param client
-	 * @return
-	 */
-	T commond(Jedis client);
+    /**
+     * 单点redis执行方法
+     *
+     * @param client 客户端
+     * @return 结果
+     */
+    T commond(Jedis client);
 
-	/**
-	 * 集群redis执行方法
-	 * 
-	 * @param client
-	 * @return
-	 */
-	T commond(JedisCluster client);
+    /**
+     * 集群redis执行方法
+     *
+     * @param client 客户端
+     * @return 结果
+     */
+    T commond(JedisCluster client);
 
-	/**
-	 * 分片redis执行方法
-	 * 
-	 * @param client
-	 * @return
-	 */
-	T commond(ShardedJedis client);
+    /**
+     * 分片redis执行方法
+     *
+     * @param client 客户端
+     * @return 结果
+     */
+    T commond(ShardedJedis client);
 
 }

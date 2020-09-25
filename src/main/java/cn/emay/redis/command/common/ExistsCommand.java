@@ -8,35 +8,34 @@ import redis.clients.jedis.ShardedJedis;
 
 /**
  * 是否存在命令
- * 
- * @author Frank
  *
+ * @author Frank
  */
 public class ExistsCommand implements RedisCommand<Boolean> {
 
-	private String key;
+    private final String key;
 
-	public ExistsCommand(String key) {
-		this.key = key;
-	}
+    public ExistsCommand(String key) {
+        this.key = key;
+    }
 
-	@Override
-	public Boolean commond(Jedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Boolean commond(Jedis client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Boolean commond(JedisCluster client) {
-		return this.exec(client);
-	}
+    @Override
+    public Boolean commond(JedisCluster client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Boolean commond(ShardedJedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Boolean commond(ShardedJedis client) {
+        return this.exec(client);
+    }
 
-	private Boolean exec(JedisCommands command) {
-		return command.exists(key);
-	}
+    private Boolean exec(JedisCommands command) {
+        return command.exists(key);
+    }
 
 }

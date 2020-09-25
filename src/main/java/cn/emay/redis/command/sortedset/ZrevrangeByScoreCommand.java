@@ -1,50 +1,44 @@
 package cn.emay.redis.command.sortedset;
 
+import cn.emay.redis.command.RedisCommand;
+import redis.clients.jedis.*;
+
 import java.util.Set;
 
-import cn.emay.redis.command.RedisCommand;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.JedisCommands;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.Tuple;
-
 /**
- * 
  * @author Frank
- *
  */
 public class ZrevrangeByScoreCommand implements RedisCommand<Set<Tuple>> {
 
-	private String key;
+    private final String key;
 
-	private double min;
+    private final double min;
 
-	private double max;
+    private final double max;
 
-	public ZrevrangeByScoreCommand(String key, double min, double max) {
-		this.key = key;
-		this.min = min;
-		this.max = max;
-	}
+    public ZrevrangeByScoreCommand(String key, double min, double max) {
+        this.key = key;
+        this.min = min;
+        this.max = max;
+    }
 
-	@Override
-	public Set<Tuple> commond(Jedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Set<Tuple> commond(Jedis client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Set<Tuple> commond(JedisCluster client) {
-		return this.exec(client);
-	}
+    @Override
+    public Set<Tuple> commond(JedisCluster client) {
+        return this.exec(client);
+    }
 
-	@Override
-	public Set<Tuple> commond(ShardedJedis client) {
-		return this.exec(client);
-	}
+    @Override
+    public Set<Tuple> commond(ShardedJedis client) {
+        return this.exec(client);
+    }
 
-	private Set<Tuple> exec(JedisCommands command) {
-		return command.zrevrangeByScoreWithScores(key, max, min);
-	}
+    private Set<Tuple> exec(JedisCommands command) {
+        return command.zrevrangeByScoreWithScores(key, max, min);
+    }
 
 }
